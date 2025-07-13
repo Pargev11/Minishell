@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/07/13 18:06:59 by pargev           ###   ########.fr       */
+/*   Updated: 2025/07/13 18:46:19 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 
 void	analize_command(char *command)
 {
-	printf("%s\n", command);
+	if (*command)
+	{
+		add_history(command);
+		printf("%s\n", command);
+	}
 	free(command);
 }
