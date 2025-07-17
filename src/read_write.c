@@ -14,10 +14,26 @@
 
 void	analize_command(char *command)
 {
+	char	**cmds;
+	char	*cwd;
+
 	if (*command)
 	{
 		add_history(command);
-		printf("%s\n", command);
+		cmds = parse_words(command);
+		if (!ft_strncmp(cmds[0], "cd", 3))
+		{
+			if 
+		}
+		//actually "pwd" (as well as "cd") should take one and only one arg, but... will fix later
+		else if (!ft_strncmp(cmds[0], "pwd", 3))
+		{
+			cwd = getcwd(NULL, 0);
+			printf("%s\n", cwd);
+			free(cwd);
+		}
+		else
+			printf("%s\n", command);
 	}
 	free(command);
 }
