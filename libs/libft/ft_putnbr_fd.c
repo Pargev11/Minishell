@@ -3,41 +3,64 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlchinen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/19 18:02:09 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/02/20 12:29:09 by vlchinen         ###   ########.fr       */
+/*   Created: 2025/01/13 15:21:48 by pamalkha          #+#    #+#             */
+/*   Updated: 2025/01/22 16:04:12 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <unistd.h>
+
+static int	number_size(int nb)
+{
+	int	res;
+
+	res = 0;
+	while (nb / 10 != 0)
+	{
+		res++;
+		nb /= 10;
+	}
+	return (res);
+}
+
+static int	ten_pow(int n)
+{
+	int	res;
+
+	res = 1;
+	while (n > 0)
+	{
+		res *= 10;
+		n--;
+	}
+	return (res);
+}
 
 void	ft_putnbr_fd(int n, int fd)
 {
-	int		rem;
-	int		quot;
-	int		m;
-	char	c;
+	long long	nb2;
+	int			size;
+	char		tmp;
 
-	m = 0;
-	if (n < 0)
-	{
-		m = 1;
-		write(fd, "-", 1);
-	}
-	if (!m)
-	{
-		rem = n % 10;
-		quot = n / 10;
-	}
+	size = number_size(n);
+	if (n == 0)
+		write(fd, "0", 1);
 	else
 	{
-		rem = -(n % 10);
-		quot = -(n / 10);
+		nb2 = n;
+		if (nb2 < 0)
+		{
+			write(fd, "-", 1);
+			nb2 = -nb2;
+		}
+		while (size >= 0)
+		{
+			tmp = nb2 / ten_pow(size) + '0';
+			nb2 %= ten_pow(size);
+			write(fd, &tmp, 1);
+			size--;
+		}
 	}
-	c = rem + '0';
-	if (quot)
-		ft_putnbr_fd(quot, fd);
-	write(fd, &c, 1);
 }

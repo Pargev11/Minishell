@@ -1,18 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr_fd copy.c                                :+:      :+:    :+:   */
+/*   ft_lstadd_front_bonus.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 15:21:48 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/01/20 14:39:42 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/01/20 18:41:48 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_putstr_fd(char *s, int fd)
+void	ft_lstadd_front(t_list **lst, t_list *new)
 {
-	write (fd, s, ft_strlen(s));
+	if (!lst || !new)
+		return ;
+	new->next = *lst;
+	*lst = new;
 }

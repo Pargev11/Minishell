@@ -1,22 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstiter.c                                       :+:      :+:    :+:   */
+/*   initialization.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlchinen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/21 16:22:14 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/01/21 16:22:30 by vlchinen         ###   ########.fr       */
+/*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
+/*   Updated: 2025/07/20 23:37:49 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-void	ft_lstiter(t_list *lst, void (*f)(void *))
+void	init(t_minishell *data)
 {
-	while (lst)
-	{
-		f(lst->content);
-		lst = lst->next;
-	}
+	data->cwd = getcwd(NULL, 0);
+	signal(SIGINT, interrupt_signal);
+	signal(SIGQUIT, quit_signal);
+}
+
+void	end_program(t_minishell *data)
+{
+	free(data->cwd);
 }

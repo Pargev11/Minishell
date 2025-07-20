@@ -3,34 +3,34 @@ CFLAGS		=	-g -Wall -Wextra -Werror
 
 OBJ_DIR		=	src/obj
 SRC_DIR		=	src
-INCLUDES	=	libs/
+INCLUDES	=	headers/
 
 HEADERS		=	${INCLUDES}/minishell.h
 
 SRC			=	${SRC_DIR}/main.c ${SRC_DIR}/read_write.c ${SRC_DIR}/built-ins.c ${SRC_DIR}/parse.c \
-				${SRC_DIR}/exec_bins.c ${SRC_DIR}/cleanup_helpers.c
+				${SRC_DIR}/exec_bins.c ${SRC_DIR}/cleanup_helpers.c ${SRC_DIR}/signals.c ${SRC_DIR}/initialization.c
 OBJ			=	${SRC:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
 
-LIBFT		=	$(INCLUDES)/libft/
+LIBFT		=	libs/libft/
 LIBFT_A		=	$(LIBFT)libft.a
 
 NAME		=	minishell
 
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.c	${HEADERS}
 				@mkdir -p ${OBJ_DIR}
-				${CC} ${CFLAGS} -I${INCLUDES} -c $< -o $@
+				${CC} ${CFLAGS} -I${INCLUDES} -I${LIBFT} -c $< -o $@
 
 all:			${NAME}
 
 ${LIBFT_A}:
-				@make -C $(LIBFT) all
+				@make -s -C $(LIBFT) all
 
 ${NAME}:		${OBJ} ${LIBFT_A} Makefile
-				${CC} ${CFLAGS} ${OBJ} -I${INCLUDES} -o ${NAME} -lreadline $(LIBFT_A)
+				${CC} ${CFLAGS} ${OBJ} -I${INCLUDES} -L${LIBFT} -lft -lreadline -o ${NAME}
 
 clean:
 				rm -rf ${OBJ_DIR}
-				@make -C $(LIBFT) fclean
+				@make -s -C $(LIBFT) fclean
 
 fclean: 		clean
 				rm -f ${NAME}

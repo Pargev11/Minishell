@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_bins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlchinen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/07/20 17:24:32 by vlchinen         ###   ########.fr       */
+/*   Updated: 2025/07/20 21:00:39 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	exec(char **cmds)
 	extern char	**environ;
 
 	program_path = search_for_path(environ, cmds[0]);
-	printf("program path is [%s]\n", program_path);
+	// printf("program path is [%s]\n", program_path);
 	pid = fork();
 	if (!pid)
 		execve(program_path, cmds, environ);

@@ -1,26 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstsize.c                                       :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlchinen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/19 20:15:04 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/01/19 20:15:05 by vlchinen         ###   ########.fr       */
+/*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
+/*   Updated: 2025/07/20 23:43:30 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-int	ft_lstsize(t_list *lst)
+void	interrupt_signal(int sig)
+{ 
+	(void)sig;
+	printf("\n");
+}
+
+void	quit_signal(int sig)
 {
-	int	i;
-
-	i = 0;
-	while (lst)
-	{
-		i++;
-		lst = lst->next;
-	}
-	return (i);
+	(void)sig;
+	printf("\b\b  \b\b");
 }

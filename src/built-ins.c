@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built-ins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlchinen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/07/20 13:48:53 by vlchinen         ###   ########.fr       */
+/*   Updated: 2025/07/20 20:56:42 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	cd(char **cmds, t_minishell *data)
 		data->cwd = getcwd(NULL, 0);
 	}
 	else
-		printf("it's not a valid path\n");
+		printf("cd: %s: No such file or directory\n", cmds[1]);
 	return (1);
 }
 

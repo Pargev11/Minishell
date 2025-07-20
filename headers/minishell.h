@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/07/13 18:08:42 by pargev           ###   ########.fr       */
+/*   Updated: 2025/07/20 23:37:52 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,19 @@
 # include <readline/history.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <signal.h>
 
 typedef struct s_minishell
 {
 	char	*cwd;
 }	t_minishell;
+
+//signals
+void	interrupt_signal(int sig);
+void	quit_signal(int sig);
+
+void	init(t_minishell *data);
+void	end_program(t_minishell *data);
 
 void	analize_command(char *command, t_minishell *data);
 

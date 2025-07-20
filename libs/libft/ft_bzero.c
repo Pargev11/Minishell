@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlchinen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/12 15:42:46 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/01/17 11:43:54 by vlchinen         ###   ########.fr       */
+/*   Created: 2025/01/13 15:21:48 by pamalkha          #+#    #+#             */
+/*   Updated: 2025/01/16 17:26:17 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,12 @@
 
 void	ft_bzero(void *s, size_t n)
 {
-	char	*casted;
+	unsigned char	*ptr;
 
-	casted = s;
-	while (n > 0)
+	ptr = (unsigned char *)s;
+	while (n--)
 	{
-		*casted = 0;
-		casted++;
-		n--;
+		*ptr = 0;
+		ptr++;
 	}
 }

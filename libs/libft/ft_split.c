@@ -3,96 +3,91 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlchinen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/17 17:51:00 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/02/20 16:01:58 by vlchinen         ###   ########.fr       */
+/*   Created: 2025/01/13 15:21:48 by pamalkha          #+#    #+#             */
+/*   Updated: 2025/01/24 16:45:35 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static size_t	count_words(char const *s, char c)
+static int	find_size(char const *s, char c)
 {
-	int		sep[2];
-	size_t	w_c;
+	int	count;
 
-	w_c = 0;
-	sep[1] = 1;
+	count = 0;
 	while (*s)
 	{
-		sep[0] = sep[1];
-		if (*s == c)
-			sep[1] = 1;
-		else
-			sep[1] = 0;
-		if (!sep[1] && sep[0])
-			w_c++;
-		s++;
+		while (*s == c && *s)
+			s++;
+		if (*s)
+			count++;
+		while (*s != c && *s)
+			s++;
 	}
-	return (w_c);
+	return (count);
 }
 
-static char	*worddup(const char *s, char c)
+static void	allocate(char **ptr)
 {
-	size_t	i;
-	char	*buff;
+	char	**ptr2;
 
-	i = 0;
-	while (s[i] && s[i] != c)
-		i++;
-	buff = malloc(sizeof(char) * (i + 1));
-	if (!buff)
+	ptr2 = ptr;
+	while (*ptr)
+	{
+		free(*ptr);
+		ptr++;
+	}
+	free(ptr2);
+}
+
+static int	copy(char *start, char *end, char **ptr_o, char **res_o)
+{
+	char	*ptr;
+	char	*res;
+
+	ptr = (char *)malloc(sizeof(char) * (end - start + 1));
+	res = ptr;
+	if (!ptr)
+	{
+		allocate(res_o);
 		return (0);
-	i = 0;
-	while (s[i] && s[i] != c)
-	{
-		buff[i] = s[i];
-		i++;
 	}
-	buff[i] = '\0';
-	return (buff);
-}
-
-static char	**complete_free(char **arr)
-{
-	size_t	i;
-
-	i = 0;
-	while (arr[i])
+	while (start < end)
 	{
-		free(arr[i]);
-		i++;
+		*ptr = *start;
+		ptr++;
+		start++;
 	}
-	free(arr);
-	return (0);
+	*ptr = 0;
+	*ptr_o = res;
+	return (1);
 }
 
 char	**ft_split(char const *s, char c)
 {
-	char	**arr;
-	char	**backup;
-	int		sep[2];
+	char	**res;
+	char	**ptr;
+	char	*start;
 
-	arr = malloc(sizeof(char *) * (count_words(s, c) + 1));
-	if (!arr)
+	ptr = (char **)malloc(sizeof(char *) * (find_size(s, c) + 1));
+	res = ptr;
+	if (!ptr)
 		return (0);
-	backup = arr;
-	sep[1] = 1;
 	while (*s)
 	{
-		sep[0] = sep[1];
-		if (*s++ == c)
-			sep[1] = 1;
+		while (*s == c && *s)
+			s++;
+		if (*s)
+			start = (char *)s;
 		else
-			sep[1] = 0;
-		if (!sep[1] && sep[0])
-		{
-			*arr++ = worddup(s - 1, c);
-			if (!arr[-1])
-				return (complete_free(backup));
-		}
+			break ;
+		while (*s != c && *s)
+			s++;
+		if (!copy(start, (char *)s, ptr++, res))
+			return (0);
 	}
-	*arr = 0;
-	return (backup);
+	*ptr = 0;
+	return (res);
 }

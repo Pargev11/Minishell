@@ -3,75 +3,80 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlchinen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/17 19:23:23 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/01/25 20:40:08 by vlchinen         ###   ########.fr       */
+/*   Created: 2025/01/13 15:21:48 by pamalkha          #+#    #+#             */
+/*   Updated: 2025/01/22 16:03:42 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static char	*allocate_num(int n)
+static int	number_size(int nb)
 {
-	char	*str;
-	int		len;
+	int	res;
 
-	len = 0;
-	if (n <= 0)
-		len++;
-	while (n)
+	res = 0;
+	while (nb / 10 != 0)
 	{
-		n /= 10;
-		len++;
+		res++;
+		nb /= 10;
 	}
-	str = malloc(sizeof(char) * (len + 1));
-	if (!str)
-		return (0);
-	return (str);
+	return (res);
 }
 
-static char	*rev_str(char *str)
+static int	ten_pow(int n)
 {
-	size_t	i;
-	size_t	len;
-	char	tmp;
+	int	res;
 
-	len = ft_strlen(str);
-	i = 0;
-	while (i < len / 2)
+	res = 1;
+	while (n > 0)
 	{
-		tmp = str[i];
-		str[i] = str[len - i - 1];
-		str[len - i - 1] = tmp;
-		i++;
+		res *= 10;
+		n--;
 	}
-	return (str);
+	return (res);
+}
+
+static void	ft_putnbr(int nb, char *buffer)
+{
+	long long	nb2;
+	int			size;
+	char		tmp;
+
+	size = number_size(nb);
+	if (nb == 0)
+		*buffer++ = '0';
+	else
+	{
+		nb2 = nb;
+		if (nb2 < 0)
+		{
+			*buffer++ = '-';
+			nb2 = -nb2;
+		}
+		while (size >= 0)
+		{
+			tmp = nb2 / ten_pow(size) + '0';
+			nb2 %= ten_pow(size);
+			*buffer++ = tmp;
+			size--;
+		}
+	}
+	*buffer = 0;
 }
 
 char	*ft_itoa(int n)
 {
-	char	*s;
-	char	*backup;
-	int		rem;
+	char	*ptr;
+	int		size;
 
-	s = allocate_num(n);
-	if (!s)
+	size = number_size(n);
+	if (n < 0)
+		size++;
+	ptr = (char *)malloc(sizeof(char) * (size + 2));
+	if (!ptr)
 		return (0);
-	backup = s;
-	if (!n)
-		*s++ = '0';
-	while (n)
-	{
-		rem = n % 10;
-		if (rem < 0)
-			rem *= -1;
-		*s = rem + '0';
-		s++;
-		if (n < 0 && n > -10)
-			*s++ = '-';
-		n /= 10;
-	}
-	s[0] = '\0';
-	return (rev_str(backup));
+	ft_putnbr(n, ptr);
+	return (ptr);
 }
