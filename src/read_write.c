@@ -12,28 +12,27 @@
 
 #include "minishell.h"
 
-void	analize_command(char *command)
+//actually "pwd" (as well as "cd") should take one and only one arg, but... will fix later
+int	run_builtin(char **cmds, t_minishell *data)
+{
+	if (!ft_strncmp(cmds[0], "cd", 3))
+		return (cd(cmds, data));
+	else if (!ft_strncmp(cmds[0], "pwd", 4))
+		return (pwd(cmds));
+	return (0);
+}
+
+void	analize_command(char *command, t_minishell *data)
 {
 	char	**cmds;
-	char	*cwd;
 
 	if (*command)
 	{
 		add_history(command);
 		cmds = parse_words(command);
-		if (!ft_strncmp(cmds[0], "cd", 3))
-		{
-			if 
-		}
-		//actually "pwd" (as well as "cd") should take one and only one arg, but... will fix later
-		else if (!ft_strncmp(cmds[0], "pwd", 3))
-		{
-			cwd = getcwd(NULL, 0);
-			printf("%s\n", cwd);
-			free(cwd);
-		}
-		else
-			printf("%s\n", command);
+		if (!run_builtin(cmds, data))
+			exec(cmds);
+		free_arr(cmds, NULL);
 	}
 	free(command);
 }

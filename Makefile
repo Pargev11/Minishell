@@ -1,5 +1,5 @@
 iCC			=	cc
-CFLAGS		=	-Wall -Wextra -Werror
+CFLAGS		=	-g -Wall -Wextra -Werror
 
 OBJ_DIR		=	src/obj
 SRC_DIR		=	src
@@ -7,7 +7,8 @@ INCLUDES	=	libs/
 
 HEADERS		=	${INCLUDES}/minishell.h
 
-SRC			=	${SRC_DIR}/main.c ${SRC_DIR}/read_write.c
+SRC			=	${SRC_DIR}/main.c ${SRC_DIR}/read_write.c ${SRC_DIR}/built-ins.c ${SRC_DIR}/parse.c \
+				${SRC_DIR}/exec_bins.c ${SRC_DIR}/cleanup_helpers.c
 OBJ			=	${SRC:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
 
 LIBFT		=	$(INCLUDES)/libft/
@@ -29,6 +30,7 @@ ${NAME}:		${OBJ} ${LIBFT_A} Makefile
 
 clean:
 				rm -rf ${OBJ_DIR}
+				@make -C $(LIBFT) fclean
 
 fclean: 		clean
 				rm -f ${NAME}
