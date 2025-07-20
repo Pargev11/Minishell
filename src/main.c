@@ -14,13 +14,19 @@
 
 void	minishell(void)
 {
-	char	*command;
+	char		*command;
+	char		*prompt_str;
+	t_minishell	data;
 
+	data.cwd = getcwd(NULL, 0);
 	while (1)
 	{
-		command = readline("> ");
-		analize_command(command);
+		prompt_str = ft_strjoin(data.cwd, "> ");
+		command = readline(prompt_str);
+		free(prompt_str);
+		analize_command(command, &data);
 	}
+	free(data.cwd);
 }
 
 int	main(void)

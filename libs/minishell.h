@@ -13,11 +13,34 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include "libft.h"
+# include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 
-void	analize_command(char *command);
+typedef struct s_minishell
+{
+	char	*cwd;
+}	t_minishell;
+
+void	analize_command(char *command, t_minishell *data);
+
+char	**parse_words(char *cmd);
+
+//built-ins
+int		cd(char **cmds, t_minishell *data);
+int		pwd(char **cmds);
+
+//bins execution
+void	exec(char **cmds);
+char	*search_for_path(char **envp, char *program);
+char	*dist_path_line(char **envp);
+
+//cleanup
+void	free_arr(char **arr, char ***cmds);
 
 #endif
