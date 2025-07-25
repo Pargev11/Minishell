@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/07/20 23:37:52 by pargev           ###   ########.fr       */
+/*   Updated: 2025/07/25 22:28:47 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <signal.h>
+# include <termios.h>
 
 typedef struct s_minishell
 {
@@ -30,7 +31,6 @@ typedef struct s_minishell
 
 //signals
 void	interrupt_signal(int sig);
-void	quit_signal(int sig);
 
 void	init(t_minishell *data);
 void	end_program(t_minishell *data);
