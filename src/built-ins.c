@@ -35,3 +35,10 @@ int	pwd(char **cmds)
 	free(cwd);
 	return (1);
 }
+int	exit_cmd(char **cmds, t_minishell *data)
+{
+	(void)cmds;
+	printf("exit\n");
+	end_program(data);
+	exit(0);
+}

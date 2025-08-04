@@ -19,6 +19,8 @@ int	run_builtin(char **cmds, t_minishell *data)
 		return (cd(cmds, data));
 	else if (!ft_strncmp(cmds[0], "pwd", 4))
 		return (pwd(cmds));
+	else if (!ft_strncmp(cmds[0], "exit", 5))
+		return (exit_cmd(cmds, data));
 	return (0);
 }
 
@@ -27,11 +29,7 @@ void	analize_command(char *command, t_minishell *data)
 	char	**cmds;
 
 	if (!command)
-	{
-		printf("exit\n");
-		end_program(data);
-		exit(0);
-	}
+		exit_cmd(NULL, data);
 	if (*command)
 	{
 		add_history(command);

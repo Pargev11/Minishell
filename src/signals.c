@@ -16,6 +16,12 @@ void	interrupt_signal(int sig)
 {
 	(void)sig;
 	printf("\n");
+	rl_replace_line ("", 0);
 	rl_on_new_line();
 	rl_redisplay();
+}
+void	print_nl_handler(int sig)
+{
+	(void)sig;
+	printf("\n");
 }

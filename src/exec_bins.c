@@ -64,10 +64,15 @@ void	exec(char **cmds)
 
 	program_path = search_for_path(environ, cmds[0]);
 	// printf("program path is [%s]\n", program_path);
-	pid = fork();
-	if (!pid)
-		execve(program_path, cmds, environ);
-	waitpid(pid, NULL, 0);
+	if (program_path && *program_path)
+	{
+		signal(SIGINT, print_nl_handler);
+		pid = fork();
+		if (!pid)
+			execve(program_path, cmds, environ);
+		waitpid(pid, NULL, 0);
+		signal(SIGINT, interrupt_signal);
+	}
 	free(program_path);
 	// here we will need to obtain exit code of a program and also terminate it by ctrl^c
 }

@@ -30,6 +30,7 @@ typedef struct s_minishell
 }	t_minishell;
 
 //signals
+void	print_nl_handler(int sig);
 void	interrupt_signal(int sig);
 
 void	init(t_minishell *data);
@@ -42,6 +43,7 @@ char	**parse_words(char *cmd);
 //built-ins
 int		cd(char **cmds, t_minishell *data);
 int		pwd(char **cmds);
+int	exit_cmd(char **cmds, t_minishell *data);
 
 //bins execution
 void	exec(char **cmds);
