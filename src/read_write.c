@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_write.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/07/20 23:38:58 by pargev           ###   ########.fr       */
+/*   Updated: 2025/08/10 15:38:25 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 //actually "pwd" (as well as "cd") should take one and only one arg, but... will fix later
 int	run_builtin(char **cmds, t_minishell *data)
 {
-	if (!ft_strncmp(cmds[0], "cd", 3))
+	if (!ft_strncmp(cmds[0], "cd", 2))
 		return (cd(cmds, data));
-	else if (!ft_strncmp(cmds[0], "pwd", 4))
+	else if (!ft_strncmp(cmds[0], "pwd\0", 4))
 		return (pwd(cmds));
-	else if (!ft_strncmp(cmds[0], "exit", 5))
+	else if (!ft_strncmp(cmds[0], "exit\0", 5))
 		return (exit_cmd(cmds, data));
 	return (0);
 }
