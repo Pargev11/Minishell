@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/08/10 16:04:57 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/08/10 17:47:59 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 //actually "pwd" (as well as "cd") should take one and only one arg, but... will fix later
 int	run_builtin(char *command, char **cmds, t_minishell *data)
 {
-	(void)command;
 	if (!ft_strncmp(cmds[0], "cd", 3))
 		return (cd(cmds, data));
 	else if (!ft_strncmp(cmds[0], "pwd", 4))
@@ -23,7 +22,7 @@ int	run_builtin(char *command, char **cmds, t_minishell *data)
 	else if (!ft_strncmp(cmds[0], "exit", 5))
 		return (exit_cmd(cmds, data));
 	else if (!ft_strncmp(cmds[0], "echo", 5))
-		return (exit_cmd(cmds, data));
+		return (echo(command + 5, cmds, data));
 	return (0);
 }
 

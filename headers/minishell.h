@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/07/25 22:28:47 by pargev           ###   ########.fr       */
+/*   Updated: 2025/08/10 17:28:55 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ char	**parse_words(char *cmd);
 //built-ins
 int		cd(char **cmds, t_minishell *data);
 int		pwd(char **cmds);
-int	exit_cmd(char **cmds, t_minishell *data);
+int		exit_cmd(char **cmds, t_minishell *data);
+int		echo(char *command, char **cmds, t_minishell *data);
 
 //bins execution
 void	exec(char **cmds);
