@@ -1,5 +1,11 @@
-iCC			=	cc
+CC			=	cc
 CFLAGS		=	-g -Wall -Wextra -Werror
+
+UNAME_S		:=	$(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	IFLAGS	+=	-I/usr/local/opt/readline/include
+	LDFLAGS	+=	-L/usr/local/opt/readline/lib
+endif
 
 OBJ_DIR		=	src/obj
 SRC_DIR		=	src
@@ -14,11 +20,15 @@ OBJ			=	${SRC:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
 LIBFT		=	libs/libft/
 LIBFT_A		=	$(LIBFT)libft.a
 
+LDFLAGS		+=	-L${LIBFT}
+IFLAGS		+=	-I${INCLUDES}
+IFLAGS		+=	-I${LIBFT}
+
 NAME		=	minishell
 
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.c	${HEADERS}
 				@mkdir -p ${OBJ_DIR}
-				${CC} ${CFLAGS} -I${INCLUDES} -I${LIBFT} -c $< -o $@
+				${CC} ${CFLAGS} ${IFLAGS} -c $< -o $@
 
 all:			${NAME}
 
@@ -26,7 +36,7 @@ ${LIBFT_A}:
 				@make -s -C $(LIBFT) all
 
 ${NAME}:		${OBJ} ${LIBFT_A} Makefile
-				${CC} ${CFLAGS} ${OBJ} -I${INCLUDES} -L${LIBFT} -lft -lreadline -o ${NAME}
+				${CC} ${CFLAGS} ${OBJ} ${IFLAGS} ${LDFLAGS} -lft -lreadline -o ${NAME}
 
 clean:
 				rm -rf ${OBJ_DIR}
