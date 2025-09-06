@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_write.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/08/16 17:13:32 by pargev           ###   ########.fr       */
+/*   Updated: 2025/09/06 18:22:56 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	run_builtin(char *command, char **cmds, t_minishell *data)
 	else if (!ft_strncmp(cmds[0], "echo", 5))
 		return (echo(command + 5, cmds, data));
 	else if (!ft_strncmp(cmds[0], "export", 7))
-		return (export(cmds));
+		return (export(cmds, data));
 	return (0);
 }
 
