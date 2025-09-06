@@ -1,30 +1,51 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   echo.c                                             :+:      :+:    :+:   */
+/*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/08/16 16:58:51 by pargev           ###   ########.fr       */
+/*   Updated: 2025/08/16 17:12:39 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	echo(char *command, char **cmds, t_minishell *data)
+void	sort_nvirements(char **env)
 {
-	char	end_of_line;
+	int			i;
+	int			j;
+	char		*tmp;
 
-	end_of_line = '\n';
-	if (cmds[1] && !ft_strncmp(cmds[1], "-n", 3))
+	i = 0;
+	while (env[i])
 	{
-		command = ft_strnstr(command, "-n", sizeof(command));
-		if (command)
-			command += 3;
-		end_of_line = '\0';
+		j = i + 1;
+		while(env[j])
+		{
+			if (ft_strcmp(env[i], env[j]) > 0)
+			{
+				tmp = env[i];
+				env[i] = env[j];
+				env[j] = tmp;
+			}
+			++j;
+		}
+		++i;
 	}
-	command = ft_strtrim(command, " ");
-	printf("%s%c", command, end_of_line);
+}
+
+int export(char **cmds)
+{
+	extern char **environ;
+	int			i;
+
+	if (cmds[1] != NULL)
+		return (1);
+	i = 0;
+	sort_nvirements(environ);
+	while (environ[i])
+		printf("declare -x %s\n", environ[i++]);
 	return (1);
 }

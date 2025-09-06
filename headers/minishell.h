@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/08/10 17:28:55 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/08/16 17:11:31 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int		cd(char **cmds, t_minishell *data);
 int		pwd(char **cmds);
 int		exit_cmd(char **cmds, t_minishell *data);
 int		echo(char *command, char **cmds, t_minishell *data);
+int		export(char **cmds);
 
 //bins execution
 void	exec(char **cmds);
@@ -53,5 +54,8 @@ char	*dist_path_line(char **envp);
 
 //cleanup
 void	free_arr(char **arr, char ***cmds);
+
+//utils
+int		ft_strcmp(const char *s1, const char *s2);
 
 #endif
