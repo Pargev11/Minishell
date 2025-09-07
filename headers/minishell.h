@@ -23,10 +23,13 @@
 # include <sys/wait.h>
 # include <signal.h>
 # include <termios.h>
+# include <sys/stat.h>
+# include <errno.h>
 
 typedef struct s_minishell
 {
 	char	*cwd;
+	int		exit_code;
 }	t_minishell;
 
 //signals
@@ -46,11 +49,14 @@ int		pwd(char **cmds);
 int	exit_cmd(char **cmds, t_minishell *data);
 
 //bins execution
-void	exec(char **cmds);
+int		exec(char **cmds);
 char	*search_for_path(char **envp, char *program);
 char	*dist_path_line(char **envp);
 
 //cleanup
 void	free_arr(char **arr, char ***cmds);
 
+//utils
+int		get_arr_sz(char **arr_2d);
+int		is_dir(char const *path);
 #endif
