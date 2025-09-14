@@ -19,5 +19,6 @@ char	**parse_words(char *cmd)
 	cmds = ft_split(cmd, ' ');
 	if (!cmds)
 		return (NULL);
+	cmds = subst_vars(cmds);
 	return (cmds);
 }

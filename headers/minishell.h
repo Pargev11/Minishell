@@ -42,6 +42,7 @@ void	end_program(t_minishell *data);
 void	analize_command(char *command, t_minishell *data);
 
 char	**parse_words(char *cmd);
+char	**subst_vars(char **cmds);
 
 //built-ins
 int		cd(char **cmds, t_minishell *data);
