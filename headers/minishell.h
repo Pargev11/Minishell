@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/09/06 17:49:39 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/09/14 17:52:42 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 typedef struct s_minishell
 {
 	char	*cwd;
+	char	**env;
 }	t_minishell;
 
 //signals
@@ -48,7 +49,7 @@ int		echo(char *command, char **cmds, t_minishell *data);
 int		export(char **cmds, t_minishell *data);
 
 //bins execution
-void	exec(char **cmds);
+void	exec(char **cmds, t_minishell *data);
 char	*search_for_path(char **envp, char *program);
 char	*dist_path_line(char **envp);
 

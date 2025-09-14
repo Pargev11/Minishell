@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_bins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/07/20 21:00:39 by pargev           ###   ########.fr       */
+/*   Updated: 2025/09/14 17:59:52 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,20 +56,19 @@ char	*search_for_path(char **envp, char *program)
 	return (free_arr(arr, NULL), ft_strdup(""));
 }
 
-void	exec(char **cmds)
+void	exec(char **cmds, t_minishell *data)
 {
 	pid_t		pid;
 	char		*program_path;
-	extern char	**environ;
 
-	program_path = search_for_path(environ, cmds[0]);
-	// printf("program path is [%s]\n", program_path);
+	program_path = search_for_path(data->env, cmds[0]);
+	printf("program path is [%s]\n", program_path);
 	if (program_path && *program_path)
 	{
 		signal(SIGINT, print_nl_handler);
 		pid = fork();
 		if (!pid)
-			execve(program_path, cmds, environ);
+			execve(program_path, cmds, data->env);
 		waitpid(pid, NULL, 0);
 		signal(SIGINT, interrupt_signal);
 	}

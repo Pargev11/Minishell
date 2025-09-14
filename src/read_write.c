@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/09/06 18:22:56 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/09/14 17:52:34 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	analize_command(char *command, t_minishell *data)
 		add_history(command);
 		cmds = parse_words(command);
 		if (!run_builtin(command, cmds, data))
-			exec(cmds);
+			exec(cmds, data);
 		free_arr(cmds, NULL);
 	}
 	free(command);
