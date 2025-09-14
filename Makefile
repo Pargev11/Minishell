@@ -1,5 +1,5 @@
 CC			=	cc
-CFLAGS		=	-g -Wall -Wextra -Werror
+CFLAGS		=	-fsanitize=address -g -Wall -Wextra -Werror
 
 UNAME_S		:=	$(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -15,7 +15,7 @@ HEADERS		=	${INCLUDES}/minishell.h
 
 SRC			=	${SRC_DIR}/main.c ${SRC_DIR}/read_write.c ${SRC_DIR}/built-ins.c ${SRC_DIR}/parse.c \
 				${SRC_DIR}/exec_bins.c ${SRC_DIR}/cleanup_helpers.c ${SRC_DIR}/signals.c ${SRC_DIR}/initialization.c \
-				${SRC_DIR}/utils.c
+				${SRC_DIR}/utils.c ${SRC_DIR}/subst_env_vars.c
 OBJ			=	${SRC:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
 
 LIBFT		=	libs/libft/
