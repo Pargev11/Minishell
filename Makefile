@@ -1,5 +1,5 @@
 CC			=	cc
-CFLAGS		=	-g -Wall -Wextra -Werror
+CFLAGS		=	-fsanitize=address -g -Wall -Wextra -Werror
 
 UNAME_S		:=	$(shell uname -s)
 ifeq ($(UNAME_S),Darwin)

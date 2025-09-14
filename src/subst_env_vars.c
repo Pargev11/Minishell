@@ -42,7 +42,6 @@ char	**get_var_names(char **envp)
 char	*strreplace(char *str, char *str_to_replace, char *replacement)
 {
 	char	*needle_p;
-	char	*out_str;
 	char	*p1;
 	char	*p2;
 	size_t	i;
@@ -59,33 +58,69 @@ char	*strreplace(char *str, char *str_to_replace, char *replacement)
 	p2 = ft_substr(str, i + ft_strlen(str_to_replace), SIZE_MAX);
 	if (!p2)
 		return (free(p1), NULL);
-	needle_p = ft_strjoin(p1, replacement);
+	if (!replacement)
+		needle_p = p1;
+	else
+		needle_p = ft_strjoin(p1, replacement);
 	if (!needle_p)
 		return (free(p1), free(p2), NULL);
-	out_str = ft_strjoin(needle_p, p2);
-	return (free(p1), free(p2), free(needle_p), out_str);
+	str = ft_strjoin(needle_p, p2);
+	return (free(p1), free(p2), str);
 }
 
-char	**subst_vars(char **cmds)
+int		is_a_valid_var_name(char c)
 {
-	extern char	**environ;
-	char		**var_names;
-	char		**var_names_b;
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+		|| (c >= '0' && c <= '9') || c == '_')
+		return (1);
+	return (0);
+}
+
+size_t	parse_vars(char **cmds, size_t i)
+{
+	char	*var_name;
+	char	*env_value;
+	char	*new_arg_str;
+	size_t	j;
+
+	j = i + 1;
+	while (is_a_valid_var_name((*cmds)[j]))
+		j++;
+	var_name = ft_substr(&((*cmds)[i]), 0, j - i + 1);
+	if (!var_name)
+		return (perror(NULL), i);
+	env_value = getenv(var_name + 1);
+	new_arg_str = strreplace(*cmds, var_name, env_value);
+	if (new_arg_str)
+	{
+		free(*cmds);
+		*cmds = new_arg_str;
+		if (env_value)
+			i += ft_strlen(env_value) - 1;
+		else
+			i--;
+	}
+	else
+		perror(NULL);
+	return (free(var_name), i);
+}
+
+char	**subst_vars(char **cmds, t_minishell *data)
+{
+	size_t		i;
 	char		**cmds_b;
 
 	cmds_b = cmds;
-	var_names = get_var_names(environ);
-	if (!var_names)
-		return (NULL);
-	var_names_b = var_names;
 	while (*cmds)
 	{
-		var_names = var_names_b;
-		while (*var_names)
+		i = 0;
+		while (ft_strnstr(*cmds, "$?", SIZE_MAX))
+			*cmds = strreplace(*cmds, "$?", ft_itoa(data->exit_code));
+		while ((*cmds)[i])
 		{
-			while (ft_strnstr(*cmds, *var_names, SIZE_MAX))
-				*cmds = strreplace(*cmds, *var_names, getenv((*var_names) + 1));
-			var_names++;
+			if ((*cmds)[i] == '$')
+				i = parse_vars(cmds, i);
+			i++;
 		}
 		cmds++;
 	}
