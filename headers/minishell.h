@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/09/14 17:52:42 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/09/21 16:54:23 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,13 @@ typedef struct s_minishell
 	char	*cwd;
 	char	**env;
 }	t_minishell;
+
+typedef struct s_env_info
+{
+	char	*env_name;
+	char	*env_value_name;
+}	t_env_info;
+
 
 //signals
 void	print_nl_handler(int sig);
@@ -58,5 +65,8 @@ void	free_arr(char **arr, char ***cmds);
 
 //utils
 int		ft_strcmp(const char *s1, const char *s2);
+void	free_matrix(char **vars);
+int		check_name(char *name);
+char	**remove_var(char **vars, int del_index);
 
 #endif

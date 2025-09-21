@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/09/14 19:05:06 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/09/21 17:15:32 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,24 +36,26 @@ void	sort_nvirements(char **env)
 	}
 }
 
-void	print_env(char *env)
+t_env_info get_env_info(char *env)
 {
-	char	*env_name_end;
-	char	*env_name;
-	char	*env_value_name;
-	int		env_name_size;
+	char		*env_name_end;
+	t_env_info	env_info;
+	int			env_name_size;
 
 	// printf("%s%s\n", env);
 	env_name_end = ft_strchr(env, '=');
-	if (!env_name_end)
-		return ;
-	env_name_size = env_name_end - env;
-	env_name = ft_substr(env, 0, env_name_size);
-	env_value_name = ft_substr(env, env_name_size+1, ft_strlen(env) - env_name_size);
-	if (ft_strncmp(env_name, "COLUMNS", 8) && ft_strncmp(env_name, "LINES", 6))
-		printf("declare -x %s=\"%s\"\n", env_name, env_value_name);
-	free(env_name);
-	free(env_value_name);
+	if (env_name_end == 0)
+	{
+		env_name_size = ft_strlen(env);
+		env_info.env_value_name = ft_strdup("\0");
+	}
+	else
+	{
+		env_name_size = env_name_end - env;
+		env_info.env_value_name = ft_substr(env, env_name_size+1, ft_strlen(env) - env_name_size);
+	}
+	env_info.env_name = ft_substr(env, 0, env_name_size);
+	return (env_info);
 }
 
 int	copy_vars(char **vars, char **tmp_env, t_minishell *data)
@@ -80,19 +82,6 @@ int	copy_vars(char **vars, char **tmp_env, t_minishell *data)
 	}
 	data->env[i] = NULL;
 	return (1);
-}
-
-void	free_matrix(char **vars)
-{
-	int	i;
-
-	i = 0;
-	while (vars[i])
-	{
-		free(vars[i]);
-		i++;
-	}
-	free(vars);
 }
 
 int	export_var(char **vars, t_minishell *data)
@@ -124,8 +113,36 @@ int	export_var(char **vars, t_minishell *data)
 	return (1);
 }
 
+char	**sort_vars(char **vars, t_minishell *data)
+{
+	t_env_info	env_info;
+	char		**new_vars;
+	int			i;
+
+	new_vars = vars;
+	i = 0;
+	while (vars[i])
+	{
+		env_info = get_env_info(vars[i]);
+		printf("%s\n", env_info.env_name);
+		if (!check_name(env_info.env_name))
+		{
+			printf("bash: export: `%s': not a valid identifier\n", env_info.env_name);
+			new_vars = remove_var(new_vars, i);
+			if (!new_vars)
+				return (0);
+		}
+		free(env_info.env_name);
+		free(env_info.env_value_name);
+		i++;
+	}
+	return (new_vars);
+}
+
 int export(char **cmds, t_minishell *data)
 {
+	t_env_info	env_info;
+	char		**sorted_vars;
 	int			i;
 
 	if (cmds[1] == NULL)
@@ -133,9 +150,16 @@ int export(char **cmds, t_minishell *data)
 		i = 0;
 		sort_nvirements(data->env);
 		while (data->env[i])
-			print_env(data->env[i++]);
+		{
+			env_info = get_env_info(data->env[i++]);
+			if (ft_strncmp(env_info.env_name, "COLUMNS", 8) && ft_strncmp(env_info.env_name, "LINES", 6))
+				printf("declare -x %s=\"%s\"\n", env_info.env_name, env_info.env_value_name);
+			free(env_info.env_name);
+			free(env_info.env_value_name);
+		}
 		return (1);
 	}
-	export_var(cmds + 1, data);
+	sorted_vars = sort_vars(cmds + 1, data);
+	export_var(sorted_vars, data);
 	return (1);
 }
