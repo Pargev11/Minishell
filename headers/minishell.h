@@ -41,8 +41,10 @@ void	end_program(t_minishell *data);
 
 void	analize_command(char *command, t_minishell *data);
 
+//parse
 char	**parse_words(char *cmd, t_minishell *data);
 char	**subst_vars(char **cmds, t_minishell *data);
+char	**split_with_quotes(char const *s, char const *set);
 
 //built-ins
 int		cd(char **cmds, t_minishell *data);
@@ -60,4 +62,7 @@ void	free_arr(char **arr, char ***cmds);
 //utils
 int		get_arr_sz(char **arr_2d);
 int		is_dir(char const *path);
+char	*str_rm_idx(char *str, size_t idx);
+char	*strreplace(char *str, char *str_to_replace, char *replacement);
+
 #endif

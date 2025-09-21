@@ -34,7 +34,7 @@ void	analize_command(char *command, t_minishell *data)
 	{
 		add_history(command);
 		cmds = parse_words(command, data);
-		if (!*cmds)
+		if (!cmds || !*cmds)
 			return (free(cmds), free(command));
 		exit_code = run_builtin(cmds, data);
 		if (exit_code < 0)

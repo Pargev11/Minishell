@@ -37,7 +37,7 @@ char	**parse_words(char *cmd, t_minishell *data)
 {
 	char	**cmds;
 
-	cmds = ft_split(cmd, ' ');
+	cmds = split_with_quotes(cmd, " \t\n");
 	if (!cmds)
 		return (NULL);
 	cmds = subst_vars(cmds, data);
