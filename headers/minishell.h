@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/09/21 16:54:23 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/10/04 13:32:04 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void	free_arr(char **arr, char ***cmds);
 int		ft_strcmp(const char *s1, const char *s2);
 void	free_matrix(char **vars);
 int		check_name(char *name);
-char	**remove_var(char **vars, int del_index);
+char	**remove_variable(char **args, int del_index);
+char	**copy_args(char **args);
 
 #endif

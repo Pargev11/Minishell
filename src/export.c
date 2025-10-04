@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/09/21 17:15:32 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/10/04 14:08:41 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,36 +113,41 @@ int	export_var(char **vars, t_minishell *data)
 	return (1);
 }
 
-char	**sort_vars(char **vars, t_minishell *data)
+char	**filter_args(char **args, t_minishell *data)
 {
 	t_env_info	env_info;
-	char		**new_vars;
+	char		**filtered_args;
 	int			i;
 
-	new_vars = vars;
+
+	
+	filtered_args = copy_args(args);
+	if (!filtered_args)
+		return (0);
 	i = 0;
-	while (vars[i])
+	while (args[i])
 	{
-		env_info = get_env_info(vars[i]);
+		printf("%s\n", args[i]);
+		env_info = get_env_info(args[i]);
 		printf("%s\n", env_info.env_name);
 		if (!check_name(env_info.env_name))
 		{
 			printf("bash: export: `%s': not a valid identifier\n", env_info.env_name);
-			new_vars = remove_var(new_vars, i);
-			if (!new_vars)
-				return (0);
+			// filtered_args = remove_variable(filtered_args, i);
+			// if (!filtered_args)
+			// 	return (0);
 		}
 		free(env_info.env_name);
 		free(env_info.env_value_name);
 		i++;
 	}
-	return (new_vars);
+	return (filtered_args);
 }
 
 int export(char **cmds, t_minishell *data)
 {
 	t_env_info	env_info;
-	char		**sorted_vars;
+	char		**filtered_args;
 	int			i;
 
 	if (cmds[1] == NULL)
@@ -159,7 +164,10 @@ int export(char **cmds, t_minishell *data)
 		}
 		return (1);
 	}
-	sorted_vars = sort_vars(cmds + 1, data);
-	export_var(sorted_vars, data);
+	filtered_args = filter_args(cmds + 1, data);
+	// if (!filtered_args)
+	// 	return (0);
+	
+	// export_var(filtered_args, data);
 	return (1);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/09/21 17:16:59 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/10/04 13:50:39 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,37 +60,62 @@ int	check_name(char *name)
 	return (1);
 }
 
-char	**remove_var(char **vars, int del_index)
+char	**remove_variable(char **args, int del_index)
 {
-	char	**new_vars;
-	int		vars_size;
+	char	**new;
+	int		size;
 	int		i;
 	int		j;
 
-	vars_size = 0;
-	while (vars[vars_size])
-		vars_size++;
-	new_vars = (char **)malloc(sizeof(char *) * (vars_size - 1));
-	if (!new_vars)
+	size = 0;
+	while (args[size])
+		size++;
+	new = (char **)malloc(sizeof(char *) * size);
+	if (!new)
 		return (0);
 	i = 0;
 	j = 0;
-	while (vars[i])
+	while (args[i])
 	{
 		if (i != del_index)
 		{
-			new_vars[j] = ft_strdup(vars[i]);
-			// printf("-- %s %d\n", vars[i], del_index);
-			if (!new_vars[j])
+			new[j] = ft_strdup(args[i]);
+			if (!new[j])
 			{
-				// free_matrix(new_vars);
+				free_matrix(new);
 				return (0);
 			}
 			j++;
 		}
 		i++;
 	}
-	// new_vars[i++] = NULL;
-	free_matrix(vars);
-	return (vars);
+	new[i++] = NULL;
+	return (new);
+}
+
+char	**copy_args(char **args)
+{
+	char	**copy;
+	int		size;
+	int		i;
+
+	size = 0;
+	while (args[size])
+		size++;
+	copy = (char **)malloc(sizeof(char *) * (size + 1));
+	if (!copy)
+		return (0);
+	i = 0;
+	while (args[i])
+	{
+		copy[i] = ft_strdup(args[i]);
+		if (!copy[i])
+		{
+			free_matrix(copy);
+			return (0);
+		}
+		i++;
+	}
+	copy[i] = NULL;
+	return (copy);
 }
