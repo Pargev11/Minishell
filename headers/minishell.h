@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/10/04 21:26:21 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/04 23:58:10 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ int		export(char **cmds, t_minishell *data);
 
 //bins execution
 void	exec(char **cmds, t_minishell *data);
-char	*search_for_path(char **envp, char *program);
-char	*dist_path_line(char **envp);
+char	*search_for_path(t_minishell *data, char *program);
+char	*dist_path_line(t_minishell *data);
 
 //cleanup
 void	free_arr(char **arr, char ***cmds);
@@ -76,7 +76,7 @@ int		check_name(char *name);
 
 //envirement variables
 t_list		**env_to_list();
-char		**list_to_env(t_list *env_list);
+char		**list_to_env(t_minishell *data);
 void		lst_add_sorted(t_list **lst, t_list *new);
 t_var_info	*lst_content(t_list	*lst);
 void		free_variable(void	*lst);

@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/04 22:48:57 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 00:08:08 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,30 @@ t_list	**env_to_list()
 		i++;
 	}
 	return (env_list);
+}
+
+char	**list_to_env(t_minishell *data)
+{
+	char	**env;
+	t_list	*current;
+	int		i;
+	
+	current = *(data->env_list);
+	env = (char **)malloc(sizeof(char *) * (ft_lstsize(current) + 1));
+	if (!env)
+		return (0);
+	i = 0;
+	while (current != NULL)
+	{
+		if (lst_content(current)->value != 0)
+		{
+			env[i] = ft_strjoin(lst_content(current)->name, "=");
+			env[i] = ft_strjoin(env[i], lst_content(current)->value);
+		}
+		i++;
+		current = current->next;
+	}
+	env[i] = NULL;
+
+	return (env);
 }

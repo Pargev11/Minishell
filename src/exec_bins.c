@@ -3,31 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   exec_bins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/09/14 17:59:52 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/10/05 00:10:46 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*dist_path_line(char **envp)
+char	*dist_path_line(t_minishell *data)
 {
-	size_t	varlen;
-	char	*varname;
+	t_list	*current;
 
-	varname = "PATH";
-	varlen = ft_strlen(varname);
-	while (*envp && envp++)
+	current = *(data->env_list);
+	while (current != NULL)
 	{
-		if (!ft_strncmp(varname, envp[-1], varlen))
-			return (envp[-1]);
+		if (ft_strcmp(lst_content(current)->name, "PATH") == 0)
+			return (lst_content(current)->value);
+		current = current->next;
 	}
 	return (NULL);
 }
 
-char	*search_for_path(char **envp, char *program)
+char	*search_for_path(t_minishell *data, char *program)
 {
 	char	**paths;
 	char	**arr;
@@ -36,7 +35,7 @@ char	*search_for_path(char **envp, char *program)
 
 	if (!access(program, X_OK) && ft_strchr(program, '/'))
 		return (ft_strdup(program));
-	paths = ft_split(dist_path_line(envp), ':');
+	paths = ft_split(dist_path_line(data), ':');
 	if (!paths)
 		return (free(program), NULL);
 	arr = paths;
@@ -60,18 +59,25 @@ void	exec(char **cmds, t_minishell *data)
 {
 	pid_t		pid;
 	char		*program_path;
+	char		**env;
 
-	program_path = search_for_path(data->env, cmds[0]);
-	printf("program path is [%s]\n", program_path);
+	program_path = search_for_path(data, cmds[0]);
+	// printf("program path is [%s]\n", program_path);
+	env = NULL;
 	if (program_path && *program_path)
 	{
 		signal(SIGINT, print_nl_handler);
 		pid = fork();
 		if (!pid)
-			execve(program_path, cmds, data->env);
+		{
+			env = list_to_env(data);
+			execve(program_path, cmds, env);
+		}
 		waitpid(pid, NULL, 0);
 		signal(SIGINT, interrupt_signal);
 	}
 	free(program_path);
+	if (env != NULL)
+		free_arr(env, NULL);
 	// here we will need to obtain exit code of a program and also terminate it by ctrl^c
 }
