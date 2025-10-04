@@ -9,7 +9,7 @@ HEADERS		=	${INCLUDES}/minishell.h
 
 SRC			=	${SRC_DIR}/main.c ${SRC_DIR}/read_write.c ${SRC_DIR}/built-ins.c ${SRC_DIR}/parse.c \
 				${SRC_DIR}/exec_bins.c ${SRC_DIR}/cleanup_helpers.c ${SRC_DIR}/signals.c ${SRC_DIR}/initialization.c \
-				${SRC_DIR}/echo.c ${SRC_DIR}/utils.c ${SRC_DIR}/export.c ${SRC_DIR}/unset.c
+				${SRC_DIR}/echo.c ${SRC_DIR}/utils.c ${SRC_DIR}/export.c ${SRC_DIR}/unset.c ${SRC_DIR}/envirement_variables.c ${SRC_DIR}/variable_list_operations.c
 OBJ			=	${SRC:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
 
 LIBFT		=	libs/libft/
@@ -24,10 +24,11 @@ ${OBJ_DIR}/%.o: ${SRC_DIR}/%.c	${HEADERS}
 all:			${NAME}
 
 ${LIBFT_A}:
-				@make -s -C $(LIBFT) all
+				@make -s -C $(LIBFT) fclean
+				@make -s -C $(LIBFT) bonus
 
 ${NAME}:		${OBJ} ${LIBFT_A} Makefile
-				${CC} ${CFLAGS} ${OBJ} -I${INCLUDES} -L${LIBFT} -lft -lreadline -o ${NAME}
+				${CC} ${CFLAGS} ${OBJ} -L${LIBFT} -lft -lreadline -o ${NAME}
 
 clean:
 				rm -rf ${OBJ_DIR}

@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/10/04 13:32:04 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/04 21:26:21 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,17 @@
 # include <signal.h>
 # include <termios.h>
 
+typedef struct s_var_info
+{
+	char	*name;
+	char	*value;
+}	t_var_info;
+
 typedef struct s_minishell
 {
 	char	*cwd;
 	char	**env;
+	t_list	**env_list;
 }	t_minishell;
 
 typedef struct s_env_info
@@ -65,9 +72,13 @@ void	free_arr(char **arr, char ***cmds);
 
 //utils
 int		ft_strcmp(const char *s1, const char *s2);
-void	free_matrix(char **vars);
 int		check_name(char *name);
-char	**remove_variable(char **args, int del_index);
-char	**copy_args(char **args);
+
+//envirement variables
+t_list		**env_to_list();
+char		**list_to_env(t_list *env_list);
+void		lst_add_sorted(t_list **lst, t_list *new);
+t_var_info	*lst_content(t_list	*lst);
+void		free_variable(void	*lst);
 
 #endif
