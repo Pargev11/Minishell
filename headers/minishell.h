@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/10/04 23:58:10 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 16:05:38 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int		ft_strcmp(const char *s1, const char *s2);
 int		check_name(char *name);
 
 //envirement variables
+t_var_info *var_info(char *variable);
 t_list		**env_to_list();
 char		**list_to_env(t_minishell *data);
 void		lst_add_sorted(t_list **lst, t_list *new);

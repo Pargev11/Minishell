@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/05 00:08:08 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 16:14:16 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,15 @@ t_var_info *var_info(char *variable)
 	if (!variable_info)
 		return (0);
 	var_name_end = ft_strchr(variable, '=');
-	if (var_name_end == 0)
+	if (*variable == '=')
 	{
 		var_name_size = ft_strlen(variable);
 		variable_info->name = ft_strdup("\0");
+	}
+	if (var_name_end == 0)
+	{
+		var_name_size = ft_strlen(variable);
+		variable_info->value = NULL;
 	}
 	else
 	{
@@ -51,9 +56,7 @@ t_list	**env_to_list()
 	while (*environ)
 	{
 		variable_info = var_info(*environ);
-		if (!variable_info)
-			return (0);
-			lst_add_sorted(env_list, ft_lstnew(variable_info));
+		lst_add_sorted(env_list, ft_lstnew(variable_info));
 		environ++;
 		i++;
 	}
@@ -73,12 +76,12 @@ char	**list_to_env(t_minishell *data)
 	i = 0;
 	while (current != NULL)
 	{
-		if (lst_content(current)->value != 0)
+		if (lst_content(current)->value != NULL)
 		{
 			env[i] = ft_strjoin(lst_content(current)->name, "=");
 			env[i] = ft_strjoin(env[i], lst_content(current)->value);
+			i++;
 		}
-		i++;
 		current = current->next;
 	}
 	env[i] = NULL;
