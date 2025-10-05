@@ -1,5 +1,5 @@
-iCC			=	cc
-CFLAGS		=	#c-g -Wall -Wextra -Werror
+CC			=	cc
+CFLAGS		=	-Wall -Wextra -Werror
 
 OBJ_DIR		=	src/obj
 SRC_DIR		=	src

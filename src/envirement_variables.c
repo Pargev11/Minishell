@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/05 18:13:43 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 19:34:00 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ void	increase_shlvl(t_var_info *var_info)
 t_list	**env_to_list()
 {
 	extern char **environ;
-	char		**variable;
 	t_var_info	*variable_info;
 	t_list		**env_list;
 	

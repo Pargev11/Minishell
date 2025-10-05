@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/05 19:28:42 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 19:33:40 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ int unset(char **cmds, t_minishell *data)
 {
     t_list		*last;
 	t_list		*current;
-    t_list		*tmp;
 	int			i;
 
 	i = 0;

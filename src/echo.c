@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/08/16 16:58:51 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 19:33:24 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	echo(char *command, char **cmds, t_minishell *data)
 {
 	char	end_of_line;
 
+	(void)data;
 	end_of_line = '\n';
 	if (cmds[1] && !ft_strncmp(cmds[1], "-n", 3))
 	{
