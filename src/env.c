@@ -1,45 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/05 19:28:42 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 18:53:03 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int unset(char **cmds, t_minishell *data)
+int env(char **cmds, t_minishell *data)
 {
-    t_list		*last;
 	t_list		*current;
-    t_list		*tmp;
-	int			i;
 
-	i = 0;
-	while (cmds[++i])
+	if (cmds[1] == NULL)
 	{
-		last = *(data->env_list);
-        current = last->next;
-        if (ft_strcmp(lst_content(last)->name, cmds[i]) == 0)
-		{
-            *data->env_list = current;
-            ft_lstdelone(last, free_variable);
-            continue;
-        }
+		current = *(data->env_list);
 		while (current != NULL)
 		{
-			if (ft_strcmp(lst_content(current)->name, cmds[i]) == 0)
-			{
-                last->next = current->next;
-                ft_lstdelone(current, free_variable);
-                break;
-			}
-			last = last->next;
-            current = last->next;
+			if (lst_content(current)->value != NULL)
+				printf("%s=%s\n", lst_content(current)->name, lst_content(current)->value);
+			current = current->next;
 		}
 	}
 	return (1);

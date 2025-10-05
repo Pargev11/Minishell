@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/05 16:20:01 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 18:39:31 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,13 @@ int export(char **cmds, t_minishell *data)
 		current = *(data->env_list);
 		while (current != NULL)
 		{
-			if (lst_content(current)->value == NULL)
-				printf("declare -x %s\n", lst_content(current)->name);
-			else
-				printf("declare -x %s=\"%s\"\n", lst_content(current)->name, lst_content(current)->value);
+			if (ft_strncmp(lst_content(current)->name, "_", 2) != 0)
+			{
+				if (lst_content(current)->value == NULL)
+					printf("declare -x %s\n", lst_content(current)->name);
+				else
+					printf("declare -x %s=\"%s\"\n", lst_content(current)->name, lst_content(current)->value);
+			}
 			current = current->next;
 		}
 		return (1);

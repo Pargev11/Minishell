@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/10/05 16:05:38 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 19:20:34 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ int		pwd(char **cmds);
 int		exit_cmd(char **cmds, t_minishell *data);
 int		echo(char *command, char **cmds, t_minishell *data);
 int		export(char **cmds, t_minishell *data);
+int 	env(char **cmds, t_minishell *data);
+int 	unset(char **cmds, t_minishell *data);
 
 //bins execution
 void	exec(char **cmds, t_minishell *data);

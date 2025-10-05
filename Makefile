@@ -9,7 +9,8 @@ HEADERS		=	${INCLUDES}/minishell.h
 
 SRC			=	${SRC_DIR}/main.c ${SRC_DIR}/read_write.c ${SRC_DIR}/built-ins.c ${SRC_DIR}/parse.c \
 				${SRC_DIR}/exec_bins.c ${SRC_DIR}/cleanup_helpers.c ${SRC_DIR}/signals.c ${SRC_DIR}/initialization.c \
-				${SRC_DIR}/echo.c ${SRC_DIR}/utils.c ${SRC_DIR}/export.c ${SRC_DIR}/unset.c ${SRC_DIR}/envirement_variables.c ${SRC_DIR}/variable_list_operations.c
+				${SRC_DIR}/echo.c ${SRC_DIR}/utils.c ${SRC_DIR}/export.c ${SRC_DIR}/unset.c \
+				${SRC_DIR}/envirement_variables.c ${SRC_DIR}/variable_list_operations.c ${SRC_DIR}/env.c
 OBJ			=	${SRC:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
 
 LIBFT		=	libs/libft/

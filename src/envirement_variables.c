@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/05 16:14:16 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 18:13:43 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,24 @@ t_var_info *var_info(char *variable)
 	return (variable_info);
 }
 
+void	increase_shlvl(t_var_info *var_info)
+{
+	int	i;
+
+	i = 0;
+	while (var_info->value[i])
+	{
+		if (!ft_isalnum(var_info->value[i]))
+		{
+			free(var_info->value);
+			var_info->value = ft_strdup("1");
+			break ;
+		}
+		i++;
+	}
+	var_info->value = ft_itoa(ft_atoi(var_info->value)+1);
+}
+
 t_list	**env_to_list()
 {
 	extern char **environ;
@@ -56,6 +74,8 @@ t_list	**env_to_list()
 	while (*environ)
 	{
 		variable_info = var_info(*environ);
+		if (ft_strncmp(variable_info->name, "SHLVL", 6) == 0)
+			increase_shlvl(variable_info);
 		lst_add_sorted(env_list, ft_lstnew(variable_info));
 		environ++;
 		i++;

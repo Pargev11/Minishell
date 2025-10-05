@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/05 16:07:12 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 18:47:13 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@ void	lst_add_sorted(t_list **lst, t_list *new)
 		*lst = new;
 	}
 	else if (line_difference == 0)
-		(*lst)->content = new->content;
+	{
+		if (lst_content(new)->value != NULL)
+			(*lst)->content = new->content;
+	}
 	else
 	{
 		current = last->next;
