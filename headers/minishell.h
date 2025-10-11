@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/07/25 22:28:47 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 19:20:34 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,26 @@
 # include <sys/stat.h>
 # include <errno.h>
 
+typedef struct s_var_info
+{
+	char	*name;
+	char	*value;
+}	t_var_info;
+
 typedef struct s_minishell
 {
 	char	*cwd;
+	char	**env;
+	t_list	**env_list;
 	int		exit_code;
 }	t_minishell;
+
+typedef struct s_env_info
+{
+	char	*env_name;
+	char	*env_value_name;
+}	t_env_info;
+
 
 //signals
 void	print_nl_handler(int sig);
@@ -47,17 +62,32 @@ char	**subst_vars(char **cmds, t_minishell *data);
 //built-ins
 int		cd(char **cmds, t_minishell *data);
 int		pwd(char **cmds);
-int	exit_cmd(char **cmds, t_minishell *data);
+int		exit_cmd(char **cmds, t_minishell *data);
+int		echo(char *command, char **cmds, t_minishell *data);
+int		export(char **cmds, t_minishell *data);
+int 	env(char **cmds, t_minishell *data);
+int 	unset(char **cmds, t_minishell *data);
 
 //bins execution
-int		exec(char **cmds);
-char	*search_for_path(char **envp, char *program);
-char	*dist_path_line(char **envp);
+void	exec(char **cmds, t_minishell *data);
+char	*search_for_path(t_minishell *data, char *program);
+char	*dist_path_line(t_minishell *data);
 
 //cleanup
 void	free_arr(char **arr, char ***cmds);
 
 //utils
+int		ft_strcmp(const char *s1, const char *s2);
+int		check_name(char *name);
+
+//envirement variables
+t_var_info *var_info(char *variable);
+t_list		**env_to_list();
+char		**list_to_env(t_minishell *data);
+void		lst_add_sorted(t_list **lst, t_list *new);
+t_var_info	*lst_content(t_list	*lst);
+void		free_variable(void	*lst);
+
 int		get_arr_sz(char **arr_2d);
 int		is_dir(char const *path);
 #endif

@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/07/20 20:56:42 by pargev           ###   ########.fr       */
+/*   Updated: 2025/08/16 17:06:10 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int	pwd(char **cmds)
 	free(cwd);
 	return (1);
 }
+
 int	exit_cmd(char **cmds, t_minishell *data)
 {
 	int		arr_sz;

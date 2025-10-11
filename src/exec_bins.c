@@ -6,28 +6,27 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/07/20 21:00:39 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/05 00:10:46 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*dist_path_line(char **envp)
+char	*dist_path_line(t_minishell *data)
 {
-	size_t	varlen;
-	char	*varname;
+	t_list	*current;
 
-	varname = "PATH";
-	varlen = ft_strlen(varname);
-	while (*envp && envp++)
+	current = *(data->env_list);
+	while (current != NULL)
 	{
-		if (!ft_strncmp(varname, envp[-1], varlen))
-			return (envp[-1]);
+		if (ft_strcmp(lst_content(current)->name, "PATH") == 0)
+			return (lst_content(current)->value);
+		current = current->next;
 	}
 	return (NULL);
 }
 
-char	*search_for_path(char **envp, char *program)
+char	*search_for_path(t_minishell *data, char *program)
 {
 	char	**paths;
 	char	**arr;
@@ -36,7 +35,7 @@ char	*search_for_path(char **envp, char *program)
 
 	if (ft_strchr(program, '/'))
 		return (ft_strdup(program));
-	paths = ft_split(dist_path_line(envp), ':');
+	paths = ft_split(dist_path_line(data), ':');
 	if (!paths)
 		return (free(program), NULL);
 	arr = paths;

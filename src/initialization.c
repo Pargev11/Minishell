@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/07/25 22:29:35 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/04 23:44:27 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,10 @@ void	config_terminal(void)
 
 void	init(t_minishell *data)
 {
+	data->env_list = env_to_list();
+	if (!data->env_list)
+		exit(1);
 	data->cwd = getcwd(NULL, 0);
-	config_terminal();
 	signal(SIGINT, interrupt_signal);
 	signal(SIGQUIT, SIG_IGN);
 }
@@ -32,4 +34,6 @@ void	init(t_minishell *data)
 void	end_program(t_minishell *data)
 {
 	free(data->cwd);
+	ft_lstclear(data->env_list, free_variable);
+	free(data->env_list);
 }
