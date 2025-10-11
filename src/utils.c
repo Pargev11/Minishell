@@ -45,4 +45,25 @@ int	check_name(char *name)
 		name++;
 	}
 	return (1);
+int	get_arr_sz(char **arr_2d)
+{
+	int	i;
+
+	i = 0;
+	while (*arr_2d)
+	{
+		i++;
+		arr_2d++;
+	}
+	return (i);
+}
+
+int	is_dir(char const *path)
+{
+	struct stat	buf;
+
+	stat(path, &buf);
+	if (S_ISDIR(buf.st_mode))
+		return (1);
+	return (0);
 }

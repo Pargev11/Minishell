@@ -23,6 +23,8 @@
 # include <sys/wait.h>
 # include <signal.h>
 # include <termios.h>
+# include <sys/stat.h>
+# include <errno.h>
 
 typedef struct s_var_info
 {
@@ -35,6 +37,7 @@ typedef struct s_minishell
 	char	*cwd;
 	char	**env;
 	t_list	**env_list;
+	int		exit_code;
 }	t_minishell;
 
 typedef struct s_env_info
@@ -53,7 +56,8 @@ void	end_program(t_minishell *data);
 
 void	analize_command(char *command, t_minishell *data);
 
-char	**parse_words(char *cmd);
+char	**parse_words(char *cmd, t_minishell *data);
+char	**subst_vars(char **cmds, t_minishell *data);
 
 //built-ins
 int		cd(char **cmds, t_minishell *data);
@@ -84,4 +88,6 @@ void		lst_add_sorted(t_list **lst, t_list *new);
 t_var_info	*lst_content(t_list	*lst);
 void		free_variable(void	*lst);
 
+int		get_arr_sz(char **arr_2d);
+int		is_dir(char const *path);
 #endif

@@ -14,24 +14,37 @@
 
 int	cd(char **cmds, t_minishell *data)
 {
-	if (cmds[2] != NULL)
-		printf("cd: too many arguments\n");
-	else if (!chdir(cmds[1]))
+	int		arr_sz;
+	char	*dir_to_ch;
+	char	*error_str;
+
+	arr_sz = get_arr_sz(cmds);
+	dir_to_ch = cmds[1];
+	if (arr_sz > 2)
+		return ((void)printf("cd: too many arguments\n"), 1);
+	else if (arr_sz == 1)
+		dir_to_ch = getenv("HOME");
+	if (!chdir(dir_to_ch))
 	{
 		free(data->cwd);
 		data->cwd = getcwd(NULL, 0);
 	}
 	else
-		printf("cd: %s: No such file or directory\n", cmds[1]);
-	return (1);
+	{
+		error_str = ft_strjoin("cd: ", cmds[1]);
+		return (perror(error_str), free(error_str), 1);
+	}
+	return (0);
 }
 
 int	pwd(char **cmds)
 {
+	int		arr_sz;
 	char	*cwd;
 
-	(void)cmds;
-	//if ac > 2, than throw error
+	arr_sz = get_arr_sz(cmds);
+	if (arr_sz > 1)
+		return ((void)printf("pwd: too many arguments\n"), 1);
 	cwd = getcwd(NULL, 0);
 	printf("%s\n", cwd);
 	free(cwd);
@@ -40,7 +53,11 @@ int	pwd(char **cmds)
 
 int	exit_cmd(char **cmds, t_minishell *data)
 {
-	(void)cmds;
+	int		arr_sz;
+
+	arr_sz = get_arr_sz(cmds);
+	if (arr_sz > 1)
+		return ((void)printf("exit: too many arguments\n"), 1);
 	printf("exit\n");
 	end_program(data);
 	exit(0);

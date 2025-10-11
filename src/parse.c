@@ -12,12 +12,35 @@
 
 #include "minishell.h"
 
-char	**parse_words(char *cmd)
+char	**delete_empty_args(char **cmds)
+{
+	size_t	i;
+	size_t	j;
+	char	**cmds_b;
+
+	cmds_b = cmds;
+	i = 0;
+	j = 0;
+	while (cmds[i])
+	{
+		if (*(cmds[i]))
+			cmds[j++] = cmds[i];
+		else
+			free(cmds[i]);
+		i++;
+	}
+	cmds[j] = NULL;
+	return (cmds_b);
+}
+
+char	**parse_words(char *cmd, t_minishell *data)
 {
 	char	**cmds;
 
 	cmds = ft_split(cmd, ' ');
 	if (!cmds)
 		return (NULL);
+	cmds = subst_vars(cmds, data);
+	cmds = delete_empty_args(cmds);
 	return (cmds);
 }

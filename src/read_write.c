@@ -29,21 +29,26 @@ int	run_builtin(char *command, char **cmds, t_minishell *data)
 		return (env(cmds, data));
 	else if (!ft_strncmp(cmds[0], "unset", 6))
 		return (unset(cmds, data));
-	return (0);
+	return (-1);
 }
 
 void	analize_command(char *command, t_minishell *data)
 {
 	char	**cmds;
+	int		exit_code;
 
 	if (!command)
 		exit_cmd(NULL, data);
 	if (*command)
 	{
 		add_history(command);
-		cmds = parse_words(command);
-		if (!run_builtin(command, cmds, data))
-			exec(cmds, data);
+		cmds = parse_words(command, data);
+		if (!*cmds)
+			return (free(cmds), free(command));
+		exit_code = run_builtin(command, cmds, data);
+		if (exit_code < 0)
+			exit_code = exec(cmds, data);
+		data->exit_code = exit_code;
 		free_arr(cmds, NULL);
 	}
 	free(command);
