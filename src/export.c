@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/05 18:39:31 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/12 22:51:22 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,27 @@ void	export_variables(char **cmds, t_minishell *data)
 	i = 1;
 	while (cmds[i])
 	{
-		variable_info = var_info(cmds[i]);
-		if (check_name(variable_info->name))
-			lst_add_sorted(data->env_list, ft_lstnew(variable_info));
+		if (*cmds[i] == '=')
+			printf("bash: export: `%s': not a valid identifier\n", cmds[i]);
 		else
 		{
-			printf("bash: export: `%s': not a valid identifier\n", variable_info->name);
-			free_variable(variable_info);
+			variable_info = var_info(cmds[i]);
+			if (check_name(variable_info->name))
+			{
+				lst_add_sorted(data->env_list, ft_lstnew(variable_info));
+			}
+			else
+			{
+				printf("bash: export: `%s': not a valid identifier\n",
+					variable_info->name);
+				free_variable(variable_info);
+			}
 		}
 		i++;
 	}
 }
 
-int export(char **cmds, t_minishell *data)
+int	export(char **cmds, t_minishell *data)
 {
 	t_list		*current;
 
@@ -46,7 +54,8 @@ int export(char **cmds, t_minishell *data)
 				if (lst_content(current)->value == NULL)
 					printf("declare -x %s\n", lst_content(current)->name);
 				else
-					printf("declare -x %s=\"%s\"\n", lst_content(current)->name, lst_content(current)->value);
+					printf("declare -x %s=\"%s\"\n", lst_content(current)->name,
+						lst_content(current)->value);
 			}
 			current = current->next;
 		}

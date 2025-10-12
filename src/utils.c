@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/10/04 21:16:48 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/12 22:38:21 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 int	check_name(char *name)
 {
-	static char *forbidden = "!\"#$%&'()*+,-./:;<=>?@[\\]^`{|}~";
+	static char	*forbidden = "!\"#$%&'()*+,-./:;<=>?@[\\]^`{|}~";
 	int			i;
 
 	if (!name || *name == 0)
@@ -45,16 +45,17 @@ int	check_name(char *name)
 		name++;
 	}
 	return (1);
+}
+
 int	get_arr_sz(char **arr_2d)
 {
 	int	i;
 
 	i = 0;
-	while (*arr_2d)
-	{
+	if (arr_2d == NULL)
+		return (0);
+	while (arr_2d[i])
 		i++;
-		arr_2d++;
-	}
 	return (i);
 }
 

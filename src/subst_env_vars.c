@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   subst_env_vars.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/12 22:39:25 by pargev            #+#    #+#             */
+/*   Updated: 2025/10/12 22:39:50 by pargev           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 size_t	get_varname_len(char *varname)
@@ -39,7 +51,7 @@ char	**get_var_names(char **envp)
 	return (tmp);
 }
 
-char	*strreplace(char *str, char *str_to_replace, char *replacement)
+char	*strreplace(char *str, char *str_to_replace, char *replacement, int clear_sources)
 {
 	char	*needle_p;
 	char	*p1;
@@ -64,11 +76,17 @@ char	*strreplace(char *str, char *str_to_replace, char *replacement)
 		needle_p = ft_strjoin(p1, replacement);
 	if (!needle_p)
 		return (free(p1), free(p2), NULL);
+	if (clear_sources)
+		free(str);
 	str = ft_strjoin(needle_p, p2);
+	if (clear_sources)
+		free(replacement);
+	if (replacement)
+		free(needle_p);
 	return (free(p1), free(p2), str);
 }
 
-int		is_a_valid_var_name(char c)
+int	is_a_valid_var_name(char c)
 {
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 		|| (c >= '0' && c <= '9') || c == '_')
@@ -76,7 +94,7 @@ int		is_a_valid_var_name(char c)
 	return (0);
 }
 
-size_t	parse_vars(char **cmds, size_t i)
+size_t	parse_vars(char **cmds, size_t i, t_minishell *data)
 {
 	char	*var_name;
 	char	*env_value;
@@ -89,8 +107,8 @@ size_t	parse_vars(char **cmds, size_t i)
 	var_name = ft_substr(&((*cmds)[i]), 0, j - i + 1);
 	if (!var_name)
 		return (perror(NULL), i);
-	env_value = getenv(var_name + 1);
-	new_arg_str = strreplace(*cmds, var_name, env_value);
+	env_value = get_varible(var_name + 1, data);
+	new_arg_str = strreplace(*cmds, var_name, env_value, 0);
 	if (new_arg_str)
 	{
 		free(*cmds);
@@ -115,11 +133,11 @@ char	**subst_vars(char **cmds, t_minishell *data)
 	{
 		i = 0;
 		while (ft_strnstr(*cmds, "$?", SIZE_MAX))
-			*cmds = strreplace(*cmds, "$?", ft_itoa(data->exit_code));
+			*cmds = strreplace(*cmds, "$?", ft_itoa(data->exit_code), 1);
 		while ((*cmds)[i])
 		{
 			if ((*cmds)[i] == '$')
-				i = parse_vars(cmds, i);
+				i = parse_vars(cmds, i, data);
 			i++;
 		}
 		cmds++;

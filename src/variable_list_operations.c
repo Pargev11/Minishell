@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/05 18:47:13 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/12 22:31:03 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,13 @@ void	lst_add_sorted(t_list **lst, t_list *new)
 	else if (line_difference == 0)
 	{
 		if (lst_content(new)->value != NULL)
-			(*lst)->content = new->content;
+		{
+			new->next = (*lst)->next;
+			ft_lstdelone(*lst, free_variable);
+			*lst = new;
+		}
+		else
+			ft_lstdelone(new, free_variable);
 	}
 	else
 	{
@@ -54,7 +60,14 @@ void	lst_add_sorted(t_list **lst, t_list *new)
 			}
 			else if (line_difference == 0)
 			{
-				current->content = new->content;
+				if (lst_content(new)->value != NULL)
+				{
+					new->next = current->next;
+					ft_lstdelone(current, free_variable);
+					last->next = new;
+				}
+				else
+					ft_lstdelone(new, free_variable);
 				return ;
 			}
 			last = current;
@@ -62,6 +75,21 @@ void	lst_add_sorted(t_list **lst, t_list *new)
 		}
 		last->next = new;
 	}
+	return ;
+}
+
+char	*get_varible(char *name, t_minishell *data)
+{
+	t_list	*current;
+
+	current = *(data->env_list);
+	while (current != NULL)
+	{
+		if (ft_strcmp(lst_content(current)->name, name) == 0)
+			return (lst_content(current)->value);
+		current = current->next;
+	}
+	return (0);
 }
 
 void	free_variable(void	*content)
@@ -69,7 +97,8 @@ void	free_variable(void	*content)
 	t_var_info	*variable_info;
 
 	variable_info = content;
-	free(variable_info->name);
+	if (variable_info->name)
+		free(variable_info->name);
 	if (variable_info->value)
 		free(variable_info->value);
 	free(variable_info);

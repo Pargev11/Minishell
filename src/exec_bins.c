@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/10/05 00:10:46 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/12 22:38:46 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,36 +55,40 @@ char	*search_for_path(t_minishell *data, char *program)
 	return (free_arr(arr, NULL), ft_strdup(""));
 }
 
-void	exec_child(char *program_path, char **cmds, char **env)
+void	exec_child(char *program_path, char **cmds, t_minishell *data)
 {
+	char	**env;
+
+	env = list_to_env(data);
 	execve(program_path, cmds, env);
 	if (!is_dir(program_path))
 	{
+		free_arr(env, NULL);
 		printf("bash: %s: %s\n", program_path, strerror(errno));
 		if (errno == ENOTDIR || errno == ENOENT)
 			exit (127);
 	}
 	else
 		printf("bash: %s: is a directory\n", program_path);
+	free_arr(env, NULL);
 	exit(126);
 }
 
-int	exec(char **cmds)
+int	exec(char **cmds, t_minishell *data)
 {
 	pid_t		pid;
 	char		*program_path;
-	extern char	**environ;
 	int			status;
 
-	program_path = search_for_path(environ, cmds[0]);
+	program_path = search_for_path(data, cmds[0]);
 	if (program_path && *program_path)
 	{
 		signal(SIGINT, print_nl_handler);
 		pid = fork();
 		if (!pid)
-			exec_child(program_path, cmds, environ);
+			exec_child(program_path, cmds, data);
 		waitpid(pid, &status, 0);
-		signal(SIGINT, interrupt_signal);	
+		signal(SIGINT, interrupt_signal);
 	}
 	else if (program_path)
 	{
