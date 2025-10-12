@@ -85,7 +85,7 @@ int	exec(char **cmds)
 		if (!pid)
 			exec_child(program_path, cmds, environ);
 		waitpid(pid, &status, 0);
-		signal(SIGINT, interrupt_signal);	
+		signal(SIGINT, interrupt_signal);
 	}
 	else if (program_path)
 	{

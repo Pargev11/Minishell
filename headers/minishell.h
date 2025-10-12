@@ -32,6 +32,25 @@ typedef struct s_minishell
 	int		exit_code;
 }	t_minishell;
 
+typedef struct s_segment
+{
+	char	quoted;
+	char	*text;
+}	t_segment;
+
+typedef struct s_words
+{
+	t_list	*segments;
+}	t_words;
+
+typedef struct s_split_data
+{
+	size_t	i;
+	size_t	start_idx;
+	int		in_word;
+	char	quote_type;
+}	t_split_data;
+
 //signals
 void	print_nl_handler(int sig);
 void	interrupt_signal(int sig);
@@ -43,13 +62,14 @@ void	analize_command(char *command, t_minishell *data);
 
 //parse
 char	**parse_words(char *cmd, t_minishell *data);
-char	**subst_vars(char **cmds, t_minishell *data);
-char	**split_with_quotes(char const *s, char const *set);
+char	**subst_vars(t_words *words, t_minishell *data);
+t_words	*split_with_quotes(char const *s, char const *set);
+void	complete_free_words(t_words *words);
 
 //built-ins
 int		cd(char **cmds, t_minishell *data);
 int		pwd(char **cmds);
-int	exit_cmd(char **cmds, t_minishell *data);
+int		exit_cmd(char **cmds, t_minishell *data);
 
 //bins execution
 int		exec(char **cmds);

@@ -36,11 +36,13 @@ char	**delete_empty_args(char **cmds)
 char	**parse_words(char *cmd, t_minishell *data)
 {
 	char	**cmds;
+	t_words	*words;
 
-	cmds = split_with_quotes(cmd, " \t\n");
-	if (!cmds)
+	words = split_with_quotes(cmd, " \t\n");
+	if (!words)
 		return (NULL);
-	cmds = subst_vars(cmds, data);
+	cmds = subst_vars(words, data);
+	complete_free_words(words);
 	cmds = delete_empty_args(cmds);
 	return (cmds);
 }

@@ -12,115 +12,104 @@
 
 #include "minishell.h"
 
-char	**complete_free(char **arr);
-int	count_words(char const *s, char const *set);
+int		count_words(char const *s, char const *set);
+void	free_segment(void *ptr);
 
-/*static char	*worddup(char *s, char const *set, char quote_type)
+void	complete_free_words(t_words *words)
 {
-	size_t	i;
-	size_t	j;
-	char	*buff;
+	t_words	*backup_w;
 
-	i = 0;
-	while (s[i] && ((!quote_type && !ft_strchr(set, s[i]))
-			|| (quote_type
-				&& (s[i] != quote_type
-				|| !ft_strchr(set, s[i + 1])))))
+	backup_w = words;
+	while (words->segments)
 	{
-		i++;
+		ft_lstclear(&(words->segments), free_segment);
+		words++;
 	}
-	buff = malloc(sizeof(char) * (i + 1));
-	if (!buff)
+	free(backup_w);
+}
+
+void	set_quote(char const *s, t_split_data *data)
+{
+	while (s && s[data->i] && ((!data->quote_type
+				&& (s[data->i] == '\'' || s[data->i] == '"'))
+			|| (s[data->i] == data->quote_type)))
+	{
+		if (!data->quote_type && (s[data->i] == '\'' || s[data->i] == '"'))
+			data->quote_type = s[data->i];
+		else if (s[data->i] == data->quote_type)
+			data->quote_type = '\0';
+		data->i++;
+	}
+}
+
+int	copy_word_segment(char const *str, char const *set,
+	t_split_data *data, t_words *words)
+{
+	size_t		i;
+	t_list		*node;
+	t_segment	*segment;
+
+	i = data->i;
+	while (str && str[data->i] && ((!ft_strchr(set, str[data->i])
+				&& !ft_strchr("\"'", str[data->i]) && !data->quote_type)
+			|| (str[data->i] != data->quote_type && data->quote_type)))
+		data->i++;
+	segment = ft_calloc(1, sizeof(*segment));
+	if (!segment)
 		return (0);
-	j = i;
-	i = 0;
-	while (s[i] && i < j)
-	{
-		buff[i] = s[i];
-		i++;
-	}
-	buff[i] = '\0';
-	return (buff);
-}*/
-
-
-
-char	*set_quote(char *s, size_t i, char *quote_type)
-{
-	char	*new_s;
-
-	new_s = s;
-	while (s[i] && ((!*quote_type && (s[i] == '\'' || s[i] == '"'))
-			|| (s[i] == *quote_type)))
-	{
-		if (!*quote_type && (s[i] == '\'' || s[i] == '"'))
-		{
-			*quote_type = s[i];
-			new_s = str_rm_idx((s), i);
-			free(s);
-		}
-		else if (s[i] == *quote_type)
-		{
-			*quote_type = '\0';
-			new_s = str_rm_idx((s), i);
-			free(s);
-		}
-		s = new_s;
-	}
-	return (new_s);
+	segment->text = ft_substr(str, i, data->i - i);
+	if (!segment->text)
+		return (free(segment), 0);
+	segment->quoted = data->quote_type;
+	node = ft_lstnew(segment);
+	if (!node)
+		return (free(segment->text), free(segment), 0);
+	ft_lstadd_back(&(words->segments), node);
+	if (str[data->i] && str[data->i] == data->quote_type && ++data->i)
+		data->quote_type = '\0';
+	data->i--;
+	return (1);
 }
 
-int	set_sep_arr(char *s, size_t i, char quote_type, char const *set)
+t_words	*split_core(char const *s, char const *set, t_words *words)
 {
-	if ((ft_strchr(set, s[i]) || !s[i]) && !quote_type)
-		return (1);
-	return (0);
-}
+	t_split_data	data;
+	t_words			*backup;
 
-char	**split_core(char *s, char const *set, char **arr, char **backup)
-{
-	int		sep[2];
-	char	quote_type;
-	size_t	i;
-	size_t	start_idx;
-
-	quote_type = '\0';
-	i = 0;
-	sep[1] = 1;
-	while (!i || s[i - 1])
+	backup = words;
+	ft_bzero(&data, sizeof(data));
+	while (s[data.i])
 	{
-		sep[0] = sep[1];
-		s = set_quote(s, i++, &quote_type);
-		if (!s)
-			return (complete_free(backup));
-		sep[1] = set_sep_arr(s, i - 1, quote_type, set);
-		if (!sep[1] && sep[0])
-			start_idx = i - 1;
-		if (sep[1] && !sep[0])
-			*arr++ = ft_substr(s, start_idx, i - 1 - start_idx);
-		if (sep[1] && !sep[0])
-			if (!arr[-1])
-				return (complete_free(backup));
+		set_quote(s, &data);
+		if (s[data.i] && (!ft_strchr(set, s[data.i]) || data.quote_type))
+		{
+			if (!copy_word_segment(s, set, &data, words))
+				return (complete_free_words(backup),
+					perror("minishell:"), NULL);
+		}
+		else if ((data.in_word && ft_strchr(set, s[data.i])
+				&& !data.quote_type) || !s[data.i])
+			words++;
+		if (!ft_strchr(set, s[data.i]) || data.quote_type)
+			data.in_word = 1;
+		else
+			data.in_word = 0;
+		if (s[data.i])
+			(data.i)++;
 	}
-	*arr = 0;
 	return (backup);
 }
 
-char	**split_with_quotes(char const *s, char const *set)
+t_words	*split_with_quotes(char const *s, char const *set)
 {
-	char	**arr;
-	char	**backup;
+	t_words	*words;
 	int		w_c;
-	char	*str;
 
 	w_c = count_words(s, set);
 	if (w_c < 0)
 		return ((void)printf("Error: unmatched quote\n"), NULL);
-	str = ft_strdup(s);
-	arr = malloc(sizeof(char *) * (w_c + 1));
-	if (!arr)
-		return (0);
-	backup = arr;
-	*arr = NULL;
-	return (split_core(str, set, arr, backup));
+	words = ft_calloc((w_c + 1), sizeof(t_words));
+	if (!words)
+		return (NULL);
+	return (split_core(s, set, words));
 }

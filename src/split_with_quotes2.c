@@ -12,20 +12,6 @@
 
 #include "minishell.h"
 
-char	**complete_free(char **arr)
-{
-	size_t	i;
-
-	i = 0;
-	while (arr[i])
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-	return (0);
-}
-
 int	count_words(char const *s, char const *set)
 {
 	int		sep[2];
@@ -52,4 +38,12 @@ int	count_words(char const *s, char const *set)
 	if (quote_type)
 		return (-1);
 	return (w_c);
+}
+
+void	free_segment(void *ptr)
+{
+	t_segment	*word;
+
+	word = ptr;
+	free(word->text);
 }
