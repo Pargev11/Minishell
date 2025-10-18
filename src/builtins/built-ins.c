@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built-ins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/08/16 17:06:10 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/18 17:19:06 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	cd(char **cmds, t_minishell *data)
 	arr_sz = get_arr_sz(cmds);
 	dir_to_ch = cmds[1];
 	if (arr_sz > 2)
-		return ((void)printf("cd: too many arguments\n"), 1);
+		return ((void)ft_putendl_fd("cd: too many arguments\n", 2), 1);
 	else if (arr_sz == 1)
 		dir_to_ch = getenv("HOME");
 	if (!chdir(dir_to_ch))
@@ -43,22 +43,35 @@ int	pwd(char **cmds)
 	char	*cwd;
 
 	arr_sz = get_arr_sz(cmds);
-	if (arr_sz > 1)
-		return ((void)printf("pwd: too many arguments\n"), 1);
 	cwd = getcwd(NULL, 0);
 	printf("%s\n", cwd);
 	free(cwd);
-	return (1);
+	return (0);
 }
 
 int	exit_cmd(char **cmds, t_minishell *data)
 {
 	int		arr_sz;
+	int		error_code;
 
+	error_code = 0;
 	arr_sz = get_arr_sz(cmds);
-	if (arr_sz > 1)
-		return ((void)printf("exit: too many arguments\n"), 1);
 	printf("exit\n");
+	if (arr_sz > 2)
+	{
+		ft_printfp("bash: exit: too many arguments\n");
+		return (1);
+	}
+	else if (arr_sz == 2)
+	{
+		error_code = ft_atoi(cmds[1]);
+		if (!error_code && !ft_strisnum(cmds[1]))
+		{
+			ft_printfp("bash: exit: %s: numeric argument required\n",
+				cmds[1]);
+			error_code = 2;
+		}
+	}
 	end_program(data);
-	exit(0);
+	exit(error_code);
 }

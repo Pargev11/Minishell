@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 12:39:45 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/05/28 17:42:33 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/18 17:17:02 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,11 @@ char	*get_next_line(int fd);
 int		ft_printf(const char *str, ...);
 size_t	ft_putchar(char c);
 size_t	ft_putstr(char *s);
+int		ft_printfp(const char *str, ...);
+size_t	ft_putcharp(char c);
+size_t	ft_putstrp(char *s);
 char	*ft_strchr2(const char *s, int c);
+
+int		ft_strisnum(char *str);
 
 #endif

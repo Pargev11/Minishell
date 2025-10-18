@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialization.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/10/11 18:01:42 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/18 15:14:22 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	init(t_minishell *data)
 	if (!data->env_list)
 		exit(1);
 	data->cwd = getcwd(NULL, 0);
+	data->exit_code = 0;
 	signal(SIGINT, interrupt_signal);
 	signal(SIGQUIT, SIG_IGN);
 }

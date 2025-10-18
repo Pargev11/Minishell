@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   variable_list_operations.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/12 22:31:03 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/18 17:07:21 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ void	lst_add_sorted(t_list **lst, t_list *new)
 		*lst = new;
 		return ;
 	}
-	line_difference = ft_strcmp(lst_content(last)->name, lst_content(new)->name);
+	line_difference = ft_strcmp(lst_content(last)->name,
+			lst_content(new)->name);
 	if (line_difference > 0)
 	{
 		new->next = last;
@@ -51,7 +52,8 @@ void	lst_add_sorted(t_list **lst, t_list *new)
 		current = last->next;
 		while (current != NULL)
 		{
-			line_difference = ft_strcmp(lst_content(current)->name, lst_content(new)->name);
+			line_difference = ft_strcmp(lst_content(current)->name,
+					lst_content(new)->name);
 			if (line_difference > 0)
 			{
 				new->next = current;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/12 22:51:22 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/18 17:01:34 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ void	export_variables(char **cmds, t_minishell *data)
 	while (cmds[i])
 	{
 		if (*cmds[i] == '=')
-			printf("bash: export: `%s': not a valid identifier\n", cmds[i]);
+		{
+			ft_printfp("bash: export: `%s': not a valid identifier\n", cmds[i]);
+			data->exit_code = 1;
+		}
 		else
 		{
 			variable_info = var_info(cmds[i]);
@@ -31,7 +34,8 @@ void	export_variables(char **cmds, t_minishell *data)
 			}
 			else
 			{
-				printf("bash: export: `%s': not a valid identifier\n",
+				data->exit_code = 1;
+				ft_printfp("bash: export: `%s': not a valid identifier\n",
 					variable_info->name);
 				free_variable(variable_info);
 			}
@@ -44,6 +48,7 @@ int	export(char **cmds, t_minishell *data)
 {
 	t_list		*current;
 
+	data->exit_code = 0;
 	if (cmds[1] == NULL)
 	{
 		current = *(data->env_list);
@@ -59,8 +64,8 @@ int	export(char **cmds, t_minishell *data)
 			}
 			current = current->next;
 		}
-		return (1);
+		return (0);
 	}
 	export_variables(cmds, data);
-	return (1);
+	return (data->exit_code);
 }
