@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_bins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/10/12 22:38:46 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/18 12:55:18 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int	exec(char **cmds, t_minishell *data)
 	char		*program_path;
 	int			status;
 
+	status = 0;
 	program_path = search_for_path(data, cmds[0]);
 	if (program_path && *program_path)
 	{
