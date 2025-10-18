@@ -8,17 +8,25 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 OBJ_DIR		=	src/obj
-SRC_DIR		=	src
 INCLUDES	=	headers/
+
+BUILTINS	=	built-ins.c echo.c export.c unset.c env.c
+ENV			=	envirement_variables.c variable_list_operations.c subst_env_vars.c
+EXEC		=	exec_bins.c
+MAIN		=	main.c signals.c initialization.c
+PARSE		=	parse.c read_write.c
+UTILS		=	cleanup_helpers.c utils.c
 
 HEADERS		=	${INCLUDES}/minishell.h
 
-SRC			=	${SRC_DIR}/main.c ${SRC_DIR}/read_write.c ${SRC_DIR}/built-ins.c ${SRC_DIR}/parse.c \
-				${SRC_DIR}/exec_bins.c ${SRC_DIR}/cleanup_helpers.c ${SRC_DIR}/signals.c ${SRC_DIR}/initialization.c \
-				${SRC_DIR}/echo.c ${SRC_DIR}/utils.c ${SRC_DIR}/export.c ${SRC_DIR}/unset.c \
-				${SRC_DIR}/envirement_variables.c ${SRC_DIR}/variable_list_operations.c ${SRC_DIR}/env.c \
-				${SRC_DIR}/subst_env_vars.c
-OBJ			=	${SRC:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
+SRC			=	$(addprefix src/builtins/, $(BUILTINS)) \
+				$(addprefix src/env/, $(ENV)) \
+				$(addprefix src/exec/, $(EXEC)) \
+				$(addprefix src/parse/, $(PARSE)) \
+				$(addprefix src/main/, $(MAIN)) \
+				$(addprefix src/utils/, $(UTILS)) \
+
+OBJ			=	$(addprefix $(OBJ_DIR)/, $(SRC:src/%.c=%.o))
 
 LIBFT		=	libs/libft/
 LIBFT_A		=	$(LIBFT)libft.a
@@ -29,8 +37,8 @@ IFLAGS		+=	-I${LIBFT}
 
 NAME		=	minishell
 
-${OBJ_DIR}/%.o: ${SRC_DIR}/%.c	${HEADERS}
-				@mkdir -p ${OBJ_DIR}
+$(OBJ_DIR)/%.o: src/%.c ${HEADERS}
+				@mkdir -p $(dir $@)
 				${CC} ${CFLAGS} ${IFLAGS} -c $< -o $@
 
 all:			${NAME}
