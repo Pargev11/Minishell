@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/10/12 22:50:18 by pargev           ###   ########.fr       */
+/*   Updated: 2025/10/19 17:01:02 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,13 @@ typedef struct s_var_info
 	char	*name;
 	char	*value;
 }	t_var_info;
+
+typedef struct s_cmd
+{
+	char	*cmd;
+	int		single_q_start;
+	int		single_q_end;
+}	t_cmd;
 
 typedef struct s_minishell
 {
