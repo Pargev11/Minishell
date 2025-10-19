@@ -53,31 +53,31 @@ char	**get_var_names(char **envp)
 
 char	*strreplace(char *str, char *str_to_replace, char *replacement)
 {
-	char	*needle_p;
-	char	*p1;
-	char	*p2;
+	char	*ptr_arr[3];
 	size_t	i;
 
 	i = 0;
-	needle_p = ft_strnstr(str, str_to_replace, SIZE_MAX);
-	if (!needle_p)
+	ptr_arr[2] = ft_strnstr(str, str_to_replace, SIZE_MAX);
+	if (!ptr_arr[2])
 		return (NULL);
-	while (&(str[i]) != needle_p)
+	while (&(str[i]) != ptr_arr[2])
 		i++;
-	p1 = ft_substr(str, 0, i);
-	if (!p1)
+	ptr_arr[0] = ft_substr(str, 0, i);
+	if (!ptr_arr[0])
 		return (NULL);
-	p2 = ft_substr(str, i + ft_strlen(str_to_replace), SIZE_MAX);
-	if (!p2)
-		return (free(p1), NULL);
+	ptr_arr[1] = ft_substr(str, i + ft_strlen(str_to_replace), SIZE_MAX);
+	if (!ptr_arr[1])
+		return (free(ptr_arr[0]), NULL);
 	if (!replacement)
-		needle_p = p1;
+		ptr_arr[2] = ptr_arr[0];
 	else
-		needle_p = ft_strjoin(p1, replacement);
-	if (!needle_p)
-		return (free(p1), free(p2), NULL);
-	str = ft_strjoin(needle_p, p2);
-	return (free(p1), free(p2), str);
+		ptr_arr[2] = ft_strjoin(ptr_arr[0], replacement);
+	if (!ptr_arr[2])
+		return (free(ptr_arr[0]), free(ptr_arr[1]), NULL);
+	str = ft_strjoin(ptr_arr[2], ptr_arr[1]);
+	if (replacement)
+		free(ptr_arr[2]);
+	return (free(ptr_arr[0]), free(ptr_arr[1]), str);
 }
 
 int	is_a_valid_var_name(char *s)

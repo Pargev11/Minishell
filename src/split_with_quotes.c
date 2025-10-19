@@ -15,17 +15,18 @@
 int		count_words(char const *s, char const *set);
 void	free_segment(void *ptr);
 
-void	complete_free_words(t_words *words)
+void	complete_free_words(t_words **words)
 {
 	t_words	*backup_w;
 
-	backup_w = words;
-	while (words->segments)
+	backup_w = *words;
+	while (backup_w->segments)
 	{
-		ft_lstclear(&(words->segments), free_segment);
-		words++;
+		ft_lstclear(&(backup_w->segments), free_segment);
+		backup_w++;
 	}
-	free(backup_w);
+	free(*words);
+	*words = NULL;
 }
 
 void	set_quote(char const *s, t_split_data *data)
@@ -84,7 +85,7 @@ t_words	*split_core(char const *s, char const *set, t_words *words)
 		if (s[data.i] && (!ft_strchr(set, s[data.i]) || data.quote_type))
 		{
 			if (!copy_word_segment(s, set, &data, words))
-				return (complete_free_words(backup),
+				return (complete_free_words(&backup),
 					perror("minishell:"), NULL);
 		}
 		else if ((data.in_word && ft_strchr(set, s[data.i])

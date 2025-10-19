@@ -42,7 +42,7 @@ char	**parse_words(char *cmd, t_minishell *data)
 	if (!words)
 		return (NULL);
 	cmds = subst_vars(words, data);
-	complete_free_words(words);
+	complete_free_words(&words);
 	cmds = delete_empty_args(cmds);
 	return (cmds);
 }

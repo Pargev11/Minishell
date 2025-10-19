@@ -25,6 +25,7 @@
 # include <termios.h>
 # include <sys/stat.h>
 # include <errno.h>
+# include <stdint.h>
 
 typedef struct s_minishell
 {
@@ -64,7 +65,7 @@ void	analize_command(char *command, t_minishell *data);
 char	**parse_words(char *cmd, t_minishell *data);
 char	**subst_vars(t_words *words, t_minishell *data);
 t_words	*split_with_quotes(char const *s, char const *set);
-void	complete_free_words(t_words *words);
+void	complete_free_words(t_words **words);
 
 //built-ins
 int		cd(char **cmds, t_minishell *data);

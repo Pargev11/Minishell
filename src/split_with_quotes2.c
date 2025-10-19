@@ -20,6 +20,7 @@ int	count_words(char const *s, char const *set)
 
 	w_c = 0;
 	sep[1] = 1;
+	quote_type = '\0';
 	while (*s)
 	{
 		sep[0] = sep[1];
@@ -46,4 +47,5 @@ void	free_segment(void *ptr)
 
 	word = ptr;
 	free(word->text);
+	free(word);
 }

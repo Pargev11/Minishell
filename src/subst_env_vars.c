@@ -70,11 +70,17 @@ char	*compose_segments(t_words *words, char **cmds)
 char	*subst_vars_segment(char **text, t_minishell *data)
 {
 	size_t	i;
+	char	*exit_code_str;
+	char	*tmp_str;
 
 	i = 0;
 	while (ft_strnstr(*text, "$?", SIZE_MAX))
 	{
-		*text = strreplace(*text, "$?", ft_itoa(data->exit_code));
+		exit_code_str = ft_itoa(data->exit_code);
+		tmp_str = *text;
+		*text = strreplace(*text, "$?", exit_code_str);
+		free(tmp_str);
+		free(exit_code_str);
 		if (!*text)
 			return (NULL);
 	}

@@ -29,9 +29,10 @@ void	minishell(t_minishell *data)
 
 int	main(void)
 {
-	t_minishell	data;
+	static t_minishell	data;
 
 	init(&data);
 	minishell(&data);
+	fscanf(stdin, "c");
 	return (0);
 }
