@@ -6,50 +6,11 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 22:39:25 by pargev            #+#    #+#             */
-/*   Updated: 2025/10/18 17:06:24 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/10/26 18:47:09 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-size_t	get_varname_len(char *varname)
-{
-	size_t	i;
-
-	i = 0;
-	while (*varname)
-	{
-		if (*varname == '=')
-			break ;
-		varname++;
-		i++;
-	}
-	return (i);
-}
-
-char	**get_var_names(char **envp)
-{
-	char	**names_arr;
-	char	**tmp;
-
-	names_arr = malloc(sizeof(char *) * get_arr_sz(envp));
-	if (!names_arr)
-		return (NULL);
-	tmp = names_arr;
-	while (*envp)
-	{
-		*names_arr = ft_substr(*envp, 0, get_varname_len(*envp));
-		if (!*names_arr)
-			return (free_arr(tmp, NULL), NULL);
-		*names_arr = ft_strjoin("$", *names_arr);
-		if (!*names_arr)
-			return (free_arr(tmp, NULL), NULL);
-		envp++;
-		names_arr++;
-	}
-	names_arr = NULL;
-	return (tmp);
-}
 
 char	*strreplace(char *str, char *str_to_replace, char *replacement, int clear_sources)
 {
@@ -94,53 +55,53 @@ int	is_a_valid_var_name(char c)
 	return (0);
 }
 
-size_t	parse_vars(char **cmds, size_t i, t_minishell *data)
+char	*parse_vars(char *cmd, size_t *i, t_minishell *data)
 {
 	char	*var_name;
 	char	*env_value;
 	char	*new_arg_str;
 	size_t	j;
 
-	j = i + 1;
-	while (is_a_valid_var_name((*cmds)[j]))
+	j = *i + 1;
+	while (is_a_valid_var_name((cmd[j])))
 		j++;
-	var_name = ft_substr(&((*cmds)[i]), 0, j - i + 1);
+	var_name = ft_substr(&(cmd[*i]), 0, j - *i);
+	// printf("var_name = %s\n", var_name);
 	if (!var_name)
-		return (perror(NULL), i);
+		return (perror(NULL), cmd);
 	env_value = get_varible(var_name + 1, data);
-	new_arg_str = strreplace(*cmds, var_name, env_value, 0);
+	new_arg_str = strreplace(cmd, var_name, env_value, 0);
 	if (new_arg_str)
 	{
-		free(*cmds);
-		*cmds = new_arg_str;
+		free(cmd);
+		cmd = new_arg_str;
+		// printf("new str = %s\n", cmd);
 		if (env_value)
-			i += ft_strlen(env_value) - 1;
+			*i += ft_strlen(env_value) - 1;
 		else
-			i--;
+			(*i)--;
 	}
 	else
 		perror(NULL);
-	return (free(var_name), i);
+	return (free(var_name), cmd);
 }
 
-char	**subst_vars(char **cmds, t_minishell *data)
+char	*subst_vars(char *cmd, t_minishell *data)
 {
 	size_t		i;
-	char		**cmds_b;
 
-	cmds_b = cmds;
-	while (*cmds)
+	i = 0;
+	while (cmd[i])
 	{
-		i = 0;
-		while (ft_strnstr(*cmds, "$?", SIZE_MAX))
-			*cmds = strreplace(*cmds, "$?", ft_itoa(data->exit_code), 1);
-		while ((*cmds)[i])
+		if (cmd[i] == '$' && cmd[i + 1] == '?')
 		{
-			if ((*cmds)[i] == '$' && (*cmds)[i + 1] != '\0')
-				i = parse_vars(cmds, i, data);
-			i++;
+			cmd = strreplace(cmd, "$?", ft_itoa(data->exit_code), 1);
+			i += ft_strlen(ft_itoa(data->exit_code)) - 1;
 		}
-		cmds++;
+		if (cmd[i] == '$' && cmd[i + 1] != '\0')
+			cmd = parse_vars(cmd, &i, data);
+		i++;
 	}
-	return (cmds_b);
+
+	return (cmd);
 }
