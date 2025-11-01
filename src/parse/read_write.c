@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_write.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/10/26 16:53:06 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/01 15:36:00 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,22 @@ void	analize_command(char *command, t_minishell *data)
 	{
 		add_history(command);
 		cmds = parse_words(command, data);
-		if (!*cmds)
-			return (free(cmds), free(command));
-		exit_code = run_builtin(cmds, data);
-		if (exit_code < 0)
-			exit_code = exec(cmds, data);
-		data->exit_code = exit_code;
-		free_arr(cmds, NULL);
+		if (cmds)
+		{
+			if (!*cmds)
+				return (free(cmds), free(command));
+			exit_code = run_builtin(cmds, data);
+			data->exit_code = exit_code;
+				free_arr(cmds, NULL);
+		}
+		// if (!*cmds)
+		// 	return (free(cmds), free(command));
+		// exit_code = run_builtin(cmds, data);
+		// if (exit_code < 0)
+		// 	exit_code = exec(cmds, data);
+		// data->exit_code = exit_code;
+		// if (cmds)
+		// 	free_arr(cmds, NULL);
 	}
 	free(command);
 }

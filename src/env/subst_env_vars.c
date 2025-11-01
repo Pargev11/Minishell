@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   subst_env_vars.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 22:39:25 by pargev            #+#    #+#             */
-/*   Updated: 2025/10/26 18:47:09 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/01 15:43:45 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,19 +89,19 @@ char	*parse_vars(char *cmd, size_t *i, t_minishell *data)
 char	*subst_vars(char *cmd, t_minishell *data)
 {
 	size_t		i;
-
+	char		*exit_code_char;
 	i = 0;
 	while (cmd[i])
 	{
 		if (cmd[i] == '$' && cmd[i + 1] == '?')
 		{
-			cmd = strreplace(cmd, "$?", ft_itoa(data->exit_code), 1);
-			i += ft_strlen(ft_itoa(data->exit_code)) - 1;
+			exit_code_char = ft_itoa(data->exit_code);
+			i += ft_strlen(exit_code_char) - 1;
+			cmd = strreplace(cmd, "$?", exit_code_char, 1);
 		}
 		if (cmd[i] == '$' && cmd[i + 1] != '\0')
 			cmd = parse_vars(cmd, &i, data);
 		i++;
 	}
-
 	return (cmd);
 }
