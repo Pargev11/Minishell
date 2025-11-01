@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/01 22:54:36 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/01 23:21:57 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	check_exit_code(int commands_count, pid_t *pids)
 		waitpid(pids[i], &status, 0);
 		if (WIFEXITED(status))
 			exit_code = WEXITSTATUS(status);
-        else if (WIFSIGNALED(status))
+		else if (WIFSIGNALED(status))
 			exit_code = 128 + WTERMSIG(status);
 		i++;
 	}
@@ -55,7 +55,7 @@ int	check_exit_code(int commands_count, pid_t *pids)
 void	execute_pipeline(char ***cmds, int commands_count, t_minishell *data)
 {
 	int		i;
-	int 	fd[2];
+	int		fd[2];
 	pid_t	*pids;
 	int		in_fd;
 	int		exit_code;
@@ -72,10 +72,11 @@ void	execute_pipeline(char ***cmds, int commands_count, t_minishell *data)
 		pids[i] = fork();
 		if (pids[i] == 0)
 		{
-			if (in_fd != STDIN_FILENO) {
+			if (in_fd != STDIN_FILENO)
+			{
 				dup2(in_fd, STDIN_FILENO);
 				close(in_fd);
-            }
+			}
 			if (i < commands_count - 1)
 			{
 				dup2(fd[1], STDOUT_FILENO);
@@ -112,7 +113,6 @@ int	char_cmds_count(char ***cmds)
 void	analize_command(char *command, t_minishell *data)
 {
 	char	***cmds;
-	int		exit_code;
 	int		i;
 
 	if (!command)

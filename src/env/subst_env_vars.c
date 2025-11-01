@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 22:39:25 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/01 15:58:22 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/01 23:27:19 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ char	*parse_vars(char *cmd, size_t *i, t_minishell *data)
 	while (is_a_valid_var_name((cmd[j])))
 		j++;
 	var_name = ft_substr(&(cmd[*i]), 0, j - *i);
-	// printf("var_name = %s\n", var_name);
 	if (!var_name)
 		return (perror(NULL), cmd);
 	env_value = get_varible(var_name + 1, data);
@@ -75,7 +74,6 @@ char	*parse_vars(char *cmd, size_t *i, t_minishell *data)
 	{
 		free(cmd);
 		cmd = new_arg_str;
-		// printf("new str = %s\n", cmd);
 		if (env_value)
 			*i += ft_strlen(env_value) - 1;
 		else
@@ -90,6 +88,7 @@ char	*subst_vars(char *cmd, t_minishell *data)
 {
 	size_t		i;
 	char		*exit_code_char;
+
 	i = 0;
 	while (cmd[i])
 	{

@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/01 19:58:53 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/01 23:25:30 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ int	skip_spaces(char *str, int *i)
 char	*substr_by_quot(char *command, char *word, int *start, int *i, t_minishell *data)
 {
 	int		first_word_end;
-	char 	quote[2];
+	char	quote[2];
 	char	*cmd_in_quotes;
-	
+
 	first_word_end = *i;
 	quote[0] = command[*i];
 	quote[1] = '\0';
@@ -38,14 +38,10 @@ char	*substr_by_quot(char *command, char *word, int *start, int *i, t_minishell 
 			if (quote[0] == '"')
 				cmd_in_quotes = subst_vars(cmd_in_quotes, data);
 			word = ft_strjoin3(word, cmd_in_quotes);
-			(*i)++;
-			*start = *i;
+			*start = ++(*i);
 			return (word);
 		}
 	}
-	// word = ft_strjoin3(word, subst_vars(ft_substr(command, *start, first_word_end - *start), data));
-	// *i = first_word_end + 1;
-	// *start = first_word_end;
 	word = ft_strjoin2(word, quote);
 	*i = first_word_end + 1;
 	*start = *i;
@@ -59,12 +55,11 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 	int		start;
 	char	*word;
 	int		is_quotation;
-	
+
 	cmds = (t_list **)malloc(sizeof(t_list *));
 	if (!cmds)
 		return (0);
 	*cmds = NULL;
-	
 	i = 0;
 	start = skip_spaces(command, &i);
 	word = NULL;
@@ -95,17 +90,10 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 			start = skip_spaces(command, &i);
 		}
 		if (command[i] == 0)
-			break;
+			break ;
 		if (command[i] != '\'' && command[i] != '"' && command[i] != '|')
 			i++;
 	}
-	
-	// t_list	*tmp = *cmds;
-	// while (tmp)
-	// {
-	// 	printf("str = %s|\n", (char *)(tmp->content));
-	// 	tmp = tmp->next;
-	// }
 	return (cmds);
 }
 
@@ -113,11 +101,9 @@ char	***parse_words(char *cmd, t_minishell *data)
 {
 	t_list	**cmds_list;
 	char	***cmds;
-	int		i;
-	
+
 	cmds_list = parse_to_list(cmd, data);
 	cmds = allocate_cmds(cmds_list);
-
 	ft_lstclear(cmds_list, free);
 	free(cmds_list);
 	return (cmds);

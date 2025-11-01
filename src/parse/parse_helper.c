@@ -6,15 +6,15 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/01 19:51:33 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/01 23:19:57 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int command_len(t_list *cmd)
+int	command_len(t_list *cmd)
 {
-    int	size;
+	int	size;
 
 	size = 0;
 	while (cmd != NULL && ft_strncmp((char *)cmd->content, "|", 2) != 0)
@@ -25,9 +25,9 @@ int command_len(t_list *cmd)
 	return (size);
 }
 
-int cmds_count(t_list *cmd)
+int	cmds_count(t_list *cmd)
 {
-    int	count;
+	int	count;
 
 	count = 0;
 	if (cmd != NULL)
@@ -41,37 +41,51 @@ int cmds_count(t_list *cmd)
 	return (count);
 }
 
+char	**allocate_cmd(t_list **cmd)
+{
+	int		len;
+	char	**cmd_c;
+	int		j;
+
+	len = command_len(*cmd);
+	cmd_c = (char **)malloc(sizeof(char *) * (len + 1));
+	if (!cmd_c)
+		return (0);
+	j = 0;
+	while (j < len)
+	{
+		cmd_c[j] = ft_strdup((char *)((*cmd)->content));
+		*cmd = (*cmd)->next;
+		if (*cmd && ft_strncmp((char *)((*cmd)->content), "|", 2) == 0)
+			*cmd = (*cmd)->next;
+		j++;
+	}
+	cmd_c[j] = 0;
+	return (cmd_c);
+}
+
 char	***allocate_cmds(t_list **cmds_list)
 {
-	t_list	*cmd;
+	t_list	**cmd;
 	char	***cmds;
 	int		count;
-	int		len;
 	int		i;
-	int		j;
-	
-	cmd = *cmds_list;
-	count = cmds_count(cmd);
+
+	cmd = (t_list **)malloc(sizeof(t_list *));
+	if (!cmd)
+		return (0);
+	*cmd = *cmds_list;
+	count = cmds_count(*cmd);
 	cmds = (char ***)malloc(sizeof(char **) * (count + 1));
 	if (!cmds)
 		return (0);
 	i = 0;
 	while (i < count)
 	{
-		len = command_len(cmd);
-		cmds[i] = (char **)malloc(sizeof(char *) * (len + 1));
-		j = 0;
-		while (j < len)
-		{
-			cmds[i][j] = ft_strdup((char *)(cmd->content));
-			cmd = cmd->next;
-			if (cmd && ft_strncmp((char *)(cmd->content), "|", 2) == 0)
-				cmd = cmd->next;
-			j++;
-		}
-		cmds[i][j] = 0;
+		cmds[i] = allocate_cmd(cmd);
 		i++;
 	}
 	cmds[i] = 0;
+	free(cmd);
 	return (cmds);
 }
