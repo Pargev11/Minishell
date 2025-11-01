@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/01 15:36:00 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/01 22:54:36 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,89 @@ int	run_builtin(char **cmds, t_minishell *data)
 	return (-1);
 }
 
+int	check_exit_code(int commands_count, pid_t *pids)
+{
+	int	i;
+	int	status;
+	int	exit_code;
+
+	i = 0;
+	exit_code = 0;
+	while (i < commands_count)
+	{
+		waitpid(pids[i], &status, 0);
+		if (WIFEXITED(status))
+			exit_code = WEXITSTATUS(status);
+        else if (WIFSIGNALED(status))
+			exit_code = 128 + WTERMSIG(status);
+		i++;
+	}
+	free(pids);
+	return (exit_code);
+}
+
+void	execute_pipeline(char ***cmds, int commands_count, t_minishell *data)
+{
+	int		i;
+	int 	fd[2];
+	pid_t	*pids;
+	int		in_fd;
+	int		exit_code;
+
+	in_fd = STDIN_FILENO;
+	pids = (pid_t *)malloc(sizeof(pid_t) * commands_count);
+	if (!pids)
+		return ;
+	i = 0;
+	while (i < commands_count)
+	{
+		if (i < commands_count - 1)
+			pipe(fd);
+		pids[i] = fork();
+		if (pids[i] == 0)
+		{
+			if (in_fd != STDIN_FILENO) {
+				dup2(in_fd, STDIN_FILENO);
+				close(in_fd);
+            }
+			if (i < commands_count - 1)
+			{
+				dup2(fd[1], STDOUT_FILENO);
+				close(fd[0]);
+				close(fd[1]);
+			}
+			exit_code = run_builtin(cmds[i], data);
+			if (exit_code < 0)
+				exec(cmds[i], data);
+			exit(exit_code);
+		}
+		if (in_fd != STDIN_FILENO)
+			close(in_fd);
+		if (i < commands_count - 1)
+		{
+			close(fd[1]);
+			in_fd = fd[0];
+		}
+		i++;
+	}
+	data->exit_code = check_exit_code(commands_count, pids);
+}
+
+int	char_cmds_count(char ***cmds)
+{
+	int	count;
+
+	count = 0;
+	while (cmds[count])
+		count++;
+	return (count);
+}
+
 void	analize_command(char *command, t_minishell *data)
 {
-	char	**cmds;
+	char	***cmds;
 	int		exit_code;
+	int		i;
 
 	if (!command)
 		exit_cmd(NULL, data);
@@ -44,20 +123,15 @@ void	analize_command(char *command, t_minishell *data)
 		cmds = parse_words(command, data);
 		if (cmds)
 		{
-			if (!*cmds)
-				return (free(cmds), free(command));
-			exit_code = run_builtin(cmds, data);
-			data->exit_code = exit_code;
-				free_arr(cmds, NULL);
+			execute_pipeline(cmds, char_cmds_count(cmds), data);
+			i = 0;
+			while (cmds[i])
+			{
+				free_arr(cmds[i], NULL);
+				i++;
+			}
+			free(cmds);
 		}
-		// if (!*cmds)
-		// 	return (free(cmds), free(command));
-		// exit_code = run_builtin(cmds, data);
-		// if (exit_code < 0)
-		// 	exit_code = exec(cmds, data);
-		// data->exit_code = exit_code;
-		// if (cmds)
-		// 	free_arr(cmds, NULL);
 	}
 	free(command);
 }

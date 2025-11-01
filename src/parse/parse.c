@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/01 15:56:02 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/01 19:58:53 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,20 @@ int	skip_spaces(char *str, int *i)
 char	*substr_by_quot(char *command, char *word, int *start, int *i, t_minishell *data)
 {
 	int		first_word_end;
-	char 	quote;
+	char 	quote[2];
 	char	*cmd_in_quotes;
 	
 	first_word_end = *i;
-	quote = command[*i];
+	quote[0] = command[*i];
+	quote[1] = '\0';
 	while (command[*i] != 0)
 	{
 		(*i)++;
-		if (command[*i] == quote)
+		if (command[*i] == quote[0])
 		{
 			word = ft_strjoin3(word, subst_vars(ft_substr(command, *start, first_word_end - *start), data));
 			cmd_in_quotes = ft_substr(command, first_word_end + 1, *i - first_word_end - 1);
-			if (quote == '"')
+			if (quote[0] == '"')
 				cmd_in_quotes = subst_vars(cmd_in_quotes, data);
 			word = ft_strjoin3(word, cmd_in_quotes);
 			(*i)++;
@@ -42,9 +43,12 @@ char	*substr_by_quot(char *command, char *word, int *start, int *i, t_minishell 
 			return (word);
 		}
 	}
-	word = ft_strjoin3(word, subst_vars(ft_substr(command, *start, first_word_end - *start), data));
+	// word = ft_strjoin3(word, subst_vars(ft_substr(command, *start, first_word_end - *start), data));
+	// *i = first_word_end + 1;
+	// *start = first_word_end;
+	word = ft_strjoin2(word, quote);
 	*i = first_word_end + 1;
-	*start = first_word_end;
+	*start = *i;
 	return (word);
 }
 
@@ -72,19 +76,27 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 			word = substr_by_quot(command, word, &start, &i, data);
 			is_quotation = 1;
 		}
-		if (command[i] == ' ' || command[i] == 0)
+		if (command[i] == ' ' || command[i] == 0 || command[i] == '|')
 		{
-			word = ft_strjoin3(word, subst_vars(ft_substr(command, start, i - start), data));
-			if (!(*word == '\0' && !is_quotation))
-				ft_lstadd_back(cmds, ft_lstnew(ft_strdup(word)));
-			free(word);
-			word = NULL;
+			if (i > 0 && command[i - 1] != ' ')
+			{
+				word = ft_strjoin3(word, subst_vars(ft_substr(command, start, i - start), data));
+				if (!(*word == '\0' && !is_quotation))
+					ft_lstadd_back(cmds, ft_lstnew(ft_strdup(word)));
+				free(word);
+				word = NULL;
+			}
+			if (command[i] == '|')
+			{
+				ft_lstadd_back(cmds, ft_lstnew(ft_strdup("|")));
+				i++;
+			}
 			is_quotation = 0;
 			start = skip_spaces(command, &i);
 		}
 		if (command[i] == 0)
 			break;
-		if (command[i] != '\'' && command[i] != '"')
+		if (command[i] != '\'' && command[i] != '"' && command[i] != '|')
 			i++;
 	}
 	
@@ -97,24 +109,15 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 	return (cmds);
 }
 
-char	**parse_words(char *cmd, t_minishell *data)
+char	***parse_words(char *cmd, t_minishell *data)
 {
-	t_list **cmds_list;
-	char	**cmds;
+	t_list	**cmds_list;
+	char	***cmds;
 	int		i;
 	
 	cmds_list = parse_to_list(cmd, data);
-	cmds = (char **)malloc(sizeof(char *) * (ft_lstsize(*cmds_list) + 1));
-	if (!cmds)
-		return (NULL);
-	t_list	*cmd_list = *cmds_list;
-	i = 0;
-	while (cmd_list)
-	{
-		cmds[i++] = ft_strdup((char *)(cmd_list->content));
-		cmd_list = cmd_list->next;
-	}
-	cmds[i] = NULL;
+	cmds = allocate_cmds(cmds_list);
+
 	ft_lstclear(cmds_list, free);
 	free(cmds_list);
 	return (cmds);
