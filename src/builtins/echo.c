@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/18 14:55:11 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/01 15:55:05 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	echo(char **cmds, t_minishell *data)
 {
 	char	end_of_line;
-	char	*command_to_print;
 	int		i;
 
 	(void)data;
@@ -28,9 +27,7 @@ int	echo(char **cmds, t_minishell *data)
 	}
 	while (cmds[i])
 	{
-		command_to_print = ft_strtrim(cmds[i], " ");
-		printf("%s", command_to_print);
-		free(command_to_print);
+		printf("%s", cmds[i]);
 		if (cmds[i + 1])
 			printf(" ");
 		i++;

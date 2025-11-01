@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/01 15:47:46 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/01 15:56:02 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,12 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 			i++;
 	}
 	
-	t_list	*tmp = *cmds;
-	while (tmp)
-	{
-		printf("str = %s|\n", (char *)(tmp->content));
-		tmp = tmp->next;
-	}
+	// t_list	*tmp = *cmds;
+	// while (tmp)
+	// {
+	// 	printf("str = %s|\n", (char *)(tmp->content));
+	// 	tmp = tmp->next;
+	// }
 	return (cmds);
 }
 

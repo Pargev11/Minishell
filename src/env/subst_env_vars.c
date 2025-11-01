@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 22:39:25 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/01 15:43:45 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/01 15:58:22 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ char	*subst_vars(char *cmd, t_minishell *data)
 			i += ft_strlen(exit_code_char) - 1;
 			cmd = strreplace(cmd, "$?", exit_code_char, 1);
 		}
-		if (cmd[i] == '$' && cmd[i + 1] != '\0')
+		if (cmd[i] == '$' && cmd[i + 1] != '\0' && cmd[i + 1] != ' ')
 			cmd = parse_vars(cmd, &i, data);
 		i++;
 	}
