@@ -3,27 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/18 17:01:34 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/01 22:49:03 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	export_variables(char **cmds, t_minishell *data)
+int	export_variables(char **cmds, t_minishell *data)
 {
 	t_var_info	*variable_info;
 	int			i;
+	int			exit_code;
 
+	exit_code = 0;
 	i = 1;
 	while (cmds[i])
 	{
 		if (*cmds[i] == '=')
 		{
 			ft_printfp("bash: export: `%s': not a valid identifier\n", cmds[i]);
-			data->exit_code = 1;
+			exit_code = 1;
 		}
 		else
 		{
@@ -34,7 +36,7 @@ void	export_variables(char **cmds, t_minishell *data)
 			}
 			else
 			{
-				data->exit_code = 1;
+				exit_code = 1;
 				ft_printfp("bash: export: `%s': not a valid identifier\n",
 					variable_info->name);
 				free_variable(variable_info);
@@ -42,13 +44,13 @@ void	export_variables(char **cmds, t_minishell *data)
 		}
 		i++;
 	}
+	return (exit_code);
 }
 
 int	export(char **cmds, t_minishell *data)
 {
 	t_list		*current;
 
-	data->exit_code = 0;
 	if (cmds[1] == NULL)
 	{
 		current = *(data->env_list);
@@ -66,6 +68,5 @@ int	export(char **cmds, t_minishell *data)
 		}
 		return (0);
 	}
-	export_variables(cmds, data);
-	return (data->exit_code);
+	return (export_variables(cmds, data));
 }

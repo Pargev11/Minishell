@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/10/18 17:19:06 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/10/26 15:00:16 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,9 @@ int	cd(char **cmds, t_minishell *data)
 
 int	pwd(char **cmds)
 {
-	int		arr_sz;
 	char	*cwd;
 
-	arr_sz = get_arr_sz(cmds);
+	(void)cmds;
 	cwd = getcwd(NULL, 0);
 	printf("%s\n", cwd);
 	free(cwd);

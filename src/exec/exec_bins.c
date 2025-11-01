@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_bins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/10/18 12:55:18 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/01 22:56:07 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char	*search_for_path(t_minishell *data, char *program)
 	return (free_arr(arr, NULL), ft_strdup(""));
 }
 
-void	exec_child(char *program_path, char **cmds, t_minishell *data)
+int	exec_child(char *program_path, char **cmds, t_minishell *data)
 {
 	char	**env;
 
@@ -66,29 +66,25 @@ void	exec_child(char *program_path, char **cmds, t_minishell *data)
 		free_arr(env, NULL);
 		printf("bash: %s: %s\n", program_path, strerror(errno));
 		if (errno == ENOTDIR || errno == ENOENT)
-			exit (127);
+			return (127);
 	}
 	else
 		printf("bash: %s: is a directory\n", program_path);
 	free_arr(env, NULL);
-	exit(126);
+	return (126);
 }
 
 int	exec(char **cmds, t_minishell *data)
 {
-	pid_t		pid;
-	char		*program_path;
-	int			status;
+	char	*program_path;
+	int		status;
 
 	status = 0;
 	program_path = search_for_path(data, cmds[0]);
 	if (program_path && *program_path)
 	{
 		signal(SIGINT, print_nl_handler);
-		pid = fork();
-		if (!pid)
-			exec_child(program_path, cmds, data);
-		waitpid(pid, &status, 0);
+		status = exec_child(program_path, cmds, data);
 		signal(SIGINT, interrupt_signal);
 	}
 	else if (program_path)
@@ -97,5 +93,5 @@ int	exec(char **cmds, t_minishell *data)
 		status = 127 << 8;
 	}
 	free(program_path);
-	return (WEXITSTATUS(status));
+	return (status);
 }
