@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/08 18:37:20 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/08 19:14:49 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	remove_redirects(char ***cmds, int i)
 	j = 0;
 	while (cmds[i][j])
 	{
-		if (!ft_strncmp(cmds[i][j], "<", 2))
+		if (!ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], "<", 2))
 			count += 2;
 		j++;
 	}
@@ -77,7 +77,7 @@ void	remove_redirects(char ***cmds, int i)
 	k = 0;
 	while (cmds[i][j])
 	{
-		if (ft_strncmp(cmds[i][j], "<", 2))
+		if (ft_strncmp(cmds[i][j], ">", 2) && ft_strncmp(cmds[i][j], "<", 2))
 		{
 			new_cmd[k] = ft_strdup(cmds[i][j]);
 			free(cmds[i][j]);
@@ -95,35 +95,46 @@ void	remove_redirects(char ***cmds, int i)
 	cmds[i] = new_cmd;
 }
 
+
+
 void	handle_redirects(char ***cmds, int i)
 {
 	int		j;
 	int		ft;
 	char	*error_str;
+	char	*operator;
 
 	j = 0;
 	while (cmds[i][j])
 	{
-		if (!ft_strncmp(cmds[i][j], "<", 2))
+		operator = cmds[i][j];
+		if (!ft_strncmp(operator, "<", 2) || !ft_strncmp(operator, ">", 2))
 		{
 			j++;
-			if (cmds[i][j] == NULL)
+			if (operator == NULL)
 			{
 				ft_printfp("syntax error near unexpected token `newline'\n");
 				exit(2);
 			}
-			ft = open(cmds[i][j], O_RDONLY);
-			// printf("file = %s\n", cmds[i][j]);
+			if (!ft_strncmp(operator, "<", 2))
+				ft = open(cmds[i][j], O_RDONLY);
+			else if (!ft_strncmp(operator, ">", 2))
+				ft = open(cmds[i][j], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (ft < 0)
 			{
-				error_str = ft_strjoin(cmds[i][j], ": ");
+				error_str = ft_strjoin(operator, ": ");
 				perror(error_str);
 				free(error_str);
 				exit(1);
 			}
 			else
 			{
-				dup2(ft, STDIN_FILENO);
+				if (!ft_strncmp(operator, "<", 2))
+					dup2(ft, STDIN_FILENO);
+				else if (!ft_strncmp(operator, ">", 2))
+				{
+					dup2(ft, STDOUT_FILENO);
+				}
 				close(ft);
 			}
 		}
