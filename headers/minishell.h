@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/01 21:22:42 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/08 16:53:50 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <termios.h>
 # include <sys/stat.h>
 # include <errno.h>
+# include <fcntl.h>
 
 # define SIZE_MAX 10124
 
@@ -69,13 +70,13 @@ char		*subst_vars(char *cmd, t_minishell *data);
 char		***allocate_cmds(t_list **cmds_list);
 
 //built-ins
-int			cd(char **cmds, t_minishell *data);
-int			pwd(char **cmds);
-int			exit_cmd(char **cmds, t_minishell *data);
-int			echo(char **cmds, t_minishell *data);
-int			export(char **cmds, t_minishell *data);
-int			env(char **cmds, t_minishell *data);
-int			unset(char **cmds, t_minishell *data);
+void		cd(char **cmds, t_minishell *data);
+void		pwd(char **cmds, t_minishell *data);
+void		exit_cmd(char **cmds, t_minishell *data);
+void		echo(char **cmds, t_minishell *data);
+void		export(char **cmds, t_minishell *data);
+void		env(char **cmds, t_minishell *data);
+void		unset(char **cmds, t_minishell *data);
 
 //bins execution
 int			exec(char **cmds, t_minishell *data);

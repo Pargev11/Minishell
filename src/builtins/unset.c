@@ -6,13 +6,13 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/18 14:56:14 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/08 16:33:51 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	unset(char **cmds, t_minishell *data)
+void	unset(char **cmds, t_minishell *data)
 {
 	t_list	*last;
 	t_list	*current;
@@ -41,5 +41,5 @@ int	unset(char **cmds, t_minishell *data)
 			current = last->next;
 		}
 	}
-	return (0);
+	data->exit_code = 0;
 }

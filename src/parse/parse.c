@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/01 23:25:30 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/08 14:09:46 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,29 @@ char	*substr_by_quot(char *command, char *word, int *start, int *i, t_minishell 
 	return (word);
 }
 
+int	parse_operators(char *command, int i, t_list **cmds)
+{
+	char	*operator;
+
+	operator = NULL;
+	if (command[i] == '|')
+		operator = ft_strdup("|");
+	else if (command[i] == '>' && command[i + 1] != '>')
+		operator = ft_strdup(">");
+	else if (command[i] == '<' && command[i + 1] != '<')
+		operator = ft_strdup("<");
+	else if (command[i] == '>' && command[i + 1] == '>')
+		operator = ft_strdup(">>");
+	else if (command[i] == '<' && command[i + 1] == '<')
+		operator = ft_strdup("<<");
+	if (operator != NULL)
+	{
+		ft_lstadd_back(cmds, ft_lstnew(operator));
+		i += ft_strlen(operator);
+	}
+	return (i);
+}
+
 t_list	**parse_to_list(char *command, t_minishell *data)
 {
 	t_list	**cmds;
@@ -71,7 +94,7 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 			word = substr_by_quot(command, word, &start, &i, data);
 			is_quotation = 1;
 		}
-		if (command[i] == ' ' || command[i] == 0 || command[i] == '|')
+		if (command[i] == ' ' || command[i] == 0 || command[i] == '|' || command[i] == '>' || command[i] == '<')
 		{
 			if (i > 0 && command[i - 1] != ' ')
 			{
@@ -81,17 +104,13 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 				free(word);
 				word = NULL;
 			}
-			if (command[i] == '|')
-			{
-				ft_lstadd_back(cmds, ft_lstnew(ft_strdup("|")));
-				i++;
-			}
+			i = parse_operators(command, i, cmds);
 			is_quotation = 0;
 			start = skip_spaces(command, &i);
 		}
 		if (command[i] == 0)
 			break ;
-		if (command[i] != '\'' && command[i] != '"' && command[i] != '|')
+		if (command[i] != '\'' && command[i] != '"' && command[i] != '|' && command[i] != '>' && command[i] != '<')
 			i++;
 	}
 	return (cmds);

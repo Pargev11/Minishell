@@ -3,29 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/11/01 22:49:03 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/08 16:33:10 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	export_variables(char **cmds, t_minishell *data)
+void	export_variables(char **cmds, t_minishell *data)
 {
 	t_var_info	*variable_info;
 	int			i;
-	int			exit_code;
 
-	exit_code = 0;
+	data->exit_code = 0;
 	i = 1;
 	while (cmds[i])
 	{
 		if (*cmds[i] == '=')
 		{
 			ft_printfp("bash: export: `%s': not a valid identifier\n", cmds[i]);
-			exit_code = 1;
+			data->exit_code = 1;
 		}
 		else
 		{
@@ -36,7 +35,7 @@ int	export_variables(char **cmds, t_minishell *data)
 			}
 			else
 			{
-				exit_code = 1;
+				data->exit_code = 1;
 				ft_printfp("bash: export: `%s': not a valid identifier\n",
 					variable_info->name);
 				free_variable(variable_info);
@@ -44,13 +43,13 @@ int	export_variables(char **cmds, t_minishell *data)
 		}
 		i++;
 	}
-	return (exit_code);
 }
 
-int	export(char **cmds, t_minishell *data)
+void	export(char **cmds, t_minishell *data)
 {
 	t_list		*current;
 
+	data->exit_code = 0;
 	if (cmds[1] == NULL)
 	{
 		current = *(data->env_list);
@@ -66,7 +65,7 @@ int	export(char **cmds, t_minishell *data)
 			}
 			current = current->next;
 		}
-		return (0);
 	}
-	return (export_variables(cmds, data));
+	else
+		export_variables(cmds, data);
 }

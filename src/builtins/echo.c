@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/11/01 15:55:05 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/08 16:33:02 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	echo(char **cmds, t_minishell *data)
+void	echo(char **cmds, t_minishell *data)
 {
 	char	end_of_line;
 	int		i;
@@ -33,5 +33,5 @@ int	echo(char **cmds, t_minishell *data)
 		i++;
 	}
 	printf("%c", end_of_line);
-	return (0);
+	data->exit_code = 0;
 }

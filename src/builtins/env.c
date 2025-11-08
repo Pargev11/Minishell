@@ -6,13 +6,13 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/18 14:55:19 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/08 16:33:04 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	env(char **cmds, t_minishell *data)
+void	env(char **cmds, t_minishell *data)
 {
 	t_list		*current;
 
@@ -27,5 +27,5 @@ int	env(char **cmds, t_minishell *data)
 			current = current->next;
 		}
 	}
-	return (0);
+	data->exit_code = 0;
 }

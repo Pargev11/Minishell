@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_write.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/01 23:21:57 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/08 18:37:20 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,22 @@
 int	run_builtin(char **cmds, t_minishell *data)
 {
 	if (!ft_strncmp(cmds[0], "cd", 3))
-		return (cd(cmds, data));
+		cd(cmds, data);
 	else if (!ft_strncmp(cmds[0], "pwd", 4))
-		return (pwd(cmds));
+		pwd(cmds, data);
 	else if (!ft_strncmp(cmds[0], "exit", 5))
-		return (exit_cmd(cmds, data));
+		exit_cmd(cmds, data);
 	else if (!ft_strncmp(cmds[0], "echo", 5))
-		return (echo(cmds, data));
+		echo(cmds, data);
 	else if (!ft_strncmp(cmds[0], "export", 7))
-		return (export(cmds, data));
+		export(cmds, data);
 	else if (!ft_strncmp(cmds[0], "env", 4))
-		return (env(cmds, data));
+		env(cmds, data);
 	else if (!ft_strncmp(cmds[0], "unset", 6))
-		return (unset(cmds, data));
-	return (-1);
+		unset(cmds, data);
+	else
+		return (0);
+	return (1);
 }
 
 int	check_exit_code(int commands_count, pid_t *pids)
@@ -52,13 +54,90 @@ int	check_exit_code(int commands_count, pid_t *pids)
 	return (exit_code);
 }
 
+void	remove_redirects(char ***cmds, int i)
+{
+	int		j;
+	int		k;
+	int		count;
+	char	**new_cmd;
+
+	count = 0;
+	j = 0;
+	while (cmds[i][j])
+	{
+		if (!ft_strncmp(cmds[i][j], "<", 2))
+			count += 2;
+		j++;
+	}
+	if (count == 0)
+		return ;
+	count = j - count;
+	new_cmd = (char **)malloc(sizeof(char *) * (count + 1));
+	j = 0;
+	k = 0;
+	while (cmds[i][j])
+	{
+		if (ft_strncmp(cmds[i][j], "<", 2))
+		{
+			new_cmd[k] = ft_strdup(cmds[i][j]);
+			free(cmds[i][j]);
+			k++;
+		}
+		else
+		{
+			free(cmds[i][j]);
+			free(cmds[i][++j]);
+		}
+		j++;
+	}
+	new_cmd[k] = 0;
+	free(cmds[i]);
+	cmds[i] = new_cmd;
+}
+
+void	handle_redirects(char ***cmds, int i)
+{
+	int		j;
+	int		ft;
+	char	*error_str;
+
+	j = 0;
+	while (cmds[i][j])
+	{
+		if (!ft_strncmp(cmds[i][j], "<", 2))
+		{
+			j++;
+			if (cmds[i][j] == NULL)
+			{
+				ft_printfp("syntax error near unexpected token `newline'\n");
+				exit(2);
+			}
+			ft = open(cmds[i][j], O_RDONLY);
+			// printf("file = %s\n", cmds[i][j]);
+			if (ft < 0)
+			{
+				error_str = ft_strjoin(cmds[i][j], ": ");
+				perror(error_str);
+				free(error_str);
+				exit(1);
+			}
+			else
+			{
+				dup2(ft, STDIN_FILENO);
+				close(ft);
+			}
+		}
+		j++;
+	}
+	remove_redirects(cmds, i);
+}
+
 void	execute_pipeline(char ***cmds, int commands_count, t_minishell *data)
 {
 	int		i;
 	int		fd[2];
 	pid_t	*pids;
 	int		in_fd;
-	int		exit_code;
 
 	in_fd = STDIN_FILENO;
 	pids = (pid_t *)malloc(sizeof(pid_t) * commands_count);
@@ -83,10 +162,10 @@ void	execute_pipeline(char ***cmds, int commands_count, t_minishell *data)
 				close(fd[0]);
 				close(fd[1]);
 			}
-			exit_code = run_builtin(cmds[i], data);
-			if (exit_code < 0)
+			handle_redirects(cmds, i);
+			if (cmds[i] && !run_builtin(cmds[i], data))
 				exec(cmds[i], data);
-			exit(exit_code);
+			exit(data->exit_code);
 		}
 		if (in_fd != STDIN_FILENO)
 			close(in_fd);
@@ -113,10 +192,15 @@ int	char_cmds_count(char ***cmds)
 void	analize_command(char *command, t_minishell *data)
 {
 	char	***cmds;
+	char	*last_cmd;
 	int		i;
-
+	
 	if (!command)
+	{
 		exit_cmd(NULL, data);
+		end_program(data);
+		exit(data->exit_code);
+	}
 	if (*command)
 	{
 		add_history(command);
@@ -124,6 +208,9 @@ void	analize_command(char *command, t_minishell *data)
 		if (cmds)
 		{
 			execute_pipeline(cmds, char_cmds_count(cmds), data);
+			last_cmd = NULL;
+			if (!cmds[char_cmds_count(cmds) - 1][1] || !cmds[char_cmds_count(cmds) - 1][2])
+				last_cmd = ft_strdup(cmds[char_cmds_count(cmds) - 1][0]);
 			i = 0;
 			while (cmds[i])
 			{
@@ -131,6 +218,13 @@ void	analize_command(char *command, t_minishell *data)
 				i++;
 			}
 			free(cmds);
+			if (last_cmd && !ft_strncmp(last_cmd, "exit", 5))
+			{
+				free(last_cmd);
+				end_program(data);
+				exit(data->exit_code);
+			}
+			free(last_cmd);
 		}
 	}
 	free(command);
