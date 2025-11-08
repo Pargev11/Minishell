@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/08 14:09:46 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/08 19:38:11 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 		if (command[i] != '\'' && command[i] != '"' && command[i] != '|' && command[i] != '>' && command[i] != '<')
 			i++;
 	}
+	
 	return (cmds);
 }
 
