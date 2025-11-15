@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/08 19:20:42 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/15 14:37:34 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void		env(char **cmds, t_minishell *data);
 void		unset(char **cmds, t_minishell *data);
 
 //bins execution
-int			exec(char **cmds, t_minishell *data);
+void		exec(char **cmds, t_minishell *data);
 char		*search_for_path(t_minishell *data, char *program);
 char		*dist_path_line(t_minishell *data);
 

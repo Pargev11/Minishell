@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/08 19:38:11 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:13:18 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	skip_spaces(char *str, int *i)
 {
-	while (str[*i] == ' ')
+	while (ft_isspace(str[*i]))
 		(*i)++;
 	return (*i);
 }
@@ -94,9 +94,9 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 			word = substr_by_quot(command, word, &start, &i, data);
 			is_quotation = 1;
 		}
-		if (command[i] == ' ' || command[i] == 0 || command[i] == '|' || command[i] == '>' || command[i] == '<')
+		if (ft_isspace(command[i]) || command[i] == 0 || command[i] == '|' || command[i] == '>' || command[i] == '<')
 		{
-			if (i > 0 && command[i - 1] != ' ')
+			if (i > 0 && !ft_isspace(command[i - 1]))
 			{
 				word = ft_strjoin3(word, subst_vars(ft_substr(command, start, i - start), data));
 				if (!(*word == '\0' && !is_quotation))
@@ -110,7 +110,7 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 		}
 		if (command[i] == 0)
 			break ;
-		if (command[i] != '\'' && command[i] != '"' && command[i] != '|' && command[i] != '>' && command[i] != '<')
+		if (command[i] != '\'' && !ft_isspace(command[i]) && command[i] != '|' && command[i] != '>' && command[i] != '<')
 			i++;
 	}
 	

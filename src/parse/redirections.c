@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/08 19:39:08 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/15 16:42:56 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	remove_redirects(char ***cmds, int i)
 	j = 0;
 	while (cmds[i][j])
 	{
-		if (!ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], "<", 2) || !ft_strncmp(cmds[i][j], ">>", 3))
+		if (!ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], "<", 2) || !ft_strncmp(cmds[i][j], ">>", 3) || !ft_strncmp(cmds[i][j], "<<", 3))
 			count += 2;
 		j++;
 	}
@@ -35,7 +35,7 @@ void	remove_redirects(char ***cmds, int i)
 	k = 0;
 	while (cmds[i][j])
 	{
-		if (ft_strncmp(cmds[i][j], ">", 2) && ft_strncmp(cmds[i][j], "<", 2) && ft_strncmp(cmds[i][j], ">>", 3))
+		if (ft_strncmp(cmds[i][j], ">", 2) && ft_strncmp(cmds[i][j], "<", 2) && ft_strncmp(cmds[i][j], ">>", 3) && ft_strncmp(cmds[i][j], "<<", 3))
 		{
 			new_cmd[k] = ft_strdup(cmds[i][j]);
 			free(cmds[i][j]);
@@ -53,6 +53,38 @@ void	remove_redirects(char ***cmds, int i)
 	cmds[i] = new_cmd;
 }
 
+void	handle_heredoc(char	**cmds, int j)
+{
+	int		fd[2];
+	char	*line;
+
+	if (cmds[j] == NULL)
+	{
+		ft_printfp("syntax error near unexpected token `newline'\n");
+		exit(2);
+	}
+	pipe(fd);
+	while (1)
+	{
+		line = readline("> ");
+		if (!line)
+		{
+			printf("\n");
+			rl_on_new_line();
+			break;
+		}
+		if (!strcmp(line, cmds[j]))
+			break;
+		write(fd[1], line, strlen(line));
+		write(fd[1], "\n", 1);
+		free(line);
+	}
+	free(line);
+	close(fd[1]);
+	dup2(fd[0], STDIN_FILENO);
+	close(fd[0]);
+}
+
 void	handle_redirects(char ***cmds, int i)
 {
 	int		j;
@@ -63,11 +95,17 @@ void	handle_redirects(char ***cmds, int i)
 	j = 0;
 	while (cmds[i][j])
 	{
+		// printf("====\n");
 		operator = cmds[i][j];
-		if (!ft_strncmp(operator, "<", 2) || !ft_strncmp(operator, ">", 2) || !ft_strncmp(operator, ">>", 3))
+		if (!ft_strncmp(operator, "<<", 3))
 		{
 			j++;
-			if (operator == NULL)
+			handle_heredoc(cmds[i], j);
+		}
+		else if (!ft_strncmp(operator, "<", 2) || !ft_strncmp(operator, ">", 2) || !ft_strncmp(operator, ">>", 3))
+		{
+			j++;
+			if (cmds[i][j] == NULL)
 			{
 				ft_printfp("syntax error near unexpected token `newline'\n");
 				exit(2);

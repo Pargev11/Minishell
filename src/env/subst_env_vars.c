@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   subst_env_vars.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 22:39:25 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/01 23:27:19 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/15 17:12:10 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ char	*subst_vars(char *cmd, t_minishell *data)
 			i += ft_strlen(exit_code_char) - 1;
 			cmd = strreplace(cmd, "$?", exit_code_char, 1);
 		}
-		if (cmd[i] == '$' && cmd[i + 1] != '\0' && cmd[i + 1] != ' ')
+		if (cmd[i] == '$' && cmd[i + 1] != '\0' && !ft_isspace(cmd[i + 1]))
 			cmd = parse_vars(cmd, &i, data);
 		i++;
 	}

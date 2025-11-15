@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 12:39:45 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/10/26 14:53:08 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:12:41 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,5 +88,7 @@ char	*ft_strchr2(const char *s, int c);
 
 int		ft_strisnum(char *str);
 char	*ft_strjoin3(char *s1, char *s2);
+
+int		ft_isspace(int c);
 
 #endif

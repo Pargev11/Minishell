@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/08 19:19:55 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/15 14:49:44 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void	analize_command(char *command, t_minishell *data)
 	{
 		add_history(command);
 		cmds = parse_words(command, data);
-		if (cmds)
+		if (cmds && *cmds)
 		{
 			execute_pipeline(cmds, char_cmds_count(cmds), data);
 			last_cmd = NULL;
@@ -139,7 +139,6 @@ void	analize_command(char *command, t_minishell *data)
 				free_arr(cmds[i], NULL);
 				i++;
 			}
-			free(cmds);
 			if (last_cmd && !ft_strncmp(last_cmd, "exit", 5))
 			{
 				free(last_cmd);
@@ -148,6 +147,8 @@ void	analize_command(char *command, t_minishell *data)
 			}
 			free(last_cmd);
 		}
+		if (cmds)
+			free(cmds);
 	}
 	free(command);
 }

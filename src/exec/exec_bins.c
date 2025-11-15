@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_bins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/01 22:56:07 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/15 15:08:40 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,40 +58,39 @@ char	*search_for_path(t_minishell *data, char *program)
 int	exec_child(char *program_path, char **cmds, t_minishell *data)
 {
 	char	**env;
+	int		error_code;
 
 	env = list_to_env(data);
 	execve(program_path, cmds, env);
+	error_code = 0;
+	free_arr(env, NULL);
 	if (!is_dir(program_path))
 	{
-		free_arr(env, NULL);
-		printf("bash: %s: %s\n", program_path, strerror(errno));
+		ft_printfp("bash: %s: %s\n", program_path, strerror(errno));
 		if (errno == ENOTDIR || errno == ENOENT)
 			return (127);
 	}
 	else
-		printf("bash: %s: is a directory\n", program_path);
-	free_arr(env, NULL);
+		ft_printfp("bash: %s: Is a directory\n", program_path);
 	return (126);
 }
 
-int	exec(char **cmds, t_minishell *data)
+void	exec(char **cmds, t_minishell *data)
 {
 	char	*program_path;
-	int		status;
 
-	status = 0;
+	data->exit_code = 0;
 	program_path = search_for_path(data, cmds[0]);
 	if (program_path && *program_path)
 	{
 		signal(SIGINT, print_nl_handler);
-		status = exec_child(program_path, cmds, data);
+		data->exit_code = exec_child(program_path, cmds, data);
 		signal(SIGINT, interrupt_signal);
 	}
 	else if (program_path)
 	{
-		printf("bash: %s: command not found\n", cmds[0]);
-		status = 127 << 8;
+		ft_printfp("bash: %s: command not found\n", cmds[0]);
+		data->exit_code = 127;
 	}
 	free(program_path);
-	return (status);
 }
