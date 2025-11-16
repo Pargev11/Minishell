@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/15 14:37:34 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/16 14:17:07 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void		analize_command(char *command, t_minishell *data);
 char		***parse_words(char *cmd, t_minishell *data);
 char		*subst_vars(char *cmd, t_minishell *data);
 char		***allocate_cmds(t_list **cmds_list);
-void		handle_redirects(char ***cmds, int i);
+int			handle_redirects(char ***cmds, int i);
 
 //built-ins
 void		cd(char **cmds, t_minishell *data);

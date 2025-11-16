@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 15:21:48 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/01/24 16:45:35 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/16 18:12:53 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ char	**ft_split(char const *s, char c)
 	char	**ptr;
 	char	*start;
 
+	if (!s)
+		return (NULL);
 	ptr = (char **)malloc(sizeof(char *) * (find_size(s, c) + 1));
 	res = ptr;
 	if (!ptr)

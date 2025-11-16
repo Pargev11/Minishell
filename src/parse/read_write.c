@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/15 14:49:44 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/16 17:30:52 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ void	execute_pipeline(char ***cmds, int commands_count, t_minishell *data)
 				close(fd[0]);
 				close(fd[1]);
 			}
-			handle_redirects(cmds, i);
-			if (cmds[i] && !run_builtin(cmds[i], data))
+			data->exit_code = handle_redirects(cmds, i);
+			if (!data->exit_code && cmds[i] && cmds[i][0] && !run_builtin(cmds[i], data))
 				exec(cmds[i], data);
 			exit(data->exit_code);
 		}
@@ -101,6 +101,28 @@ void	execute_pipeline(char ***cmds, int commands_count, t_minishell *data)
 	data->exit_code = check_exit_code(commands_count, pids);
 }
 
+void	execute_command(char ***cmds, t_minishell *data)
+{
+	pid_t	pid;
+	int		status;
+
+	// data->exit_code = handle_redirects(cmds, 0);
+	if (cmds[0] && cmds[0][0] && !run_builtin(cmds[0], data))
+	{
+		pid = fork();
+		if (pid == 0)
+		{
+			exec(cmds[0], data);
+			exit(data->exit_code);
+		}
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			data->exit_code = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			data->exit_code = 128 + WTERMSIG(status);
+	}
+}
+
 int	char_cmds_count(char ***cmds)
 {
 	int	count;
@@ -111,10 +133,23 @@ int	char_cmds_count(char ***cmds)
 	return (count);
 }
 
+int	changes_shell_state(char **cmd)
+{
+	if (!ft_strncmp(cmd[0], "cd", 3))
+		return (1);
+	if (!ft_strncmp(cmd[0], "exit", 5))
+		return (1);
+	if (!ft_strncmp(cmd[0], "export", 7) && cmd[1])
+		return (1);
+	if (!ft_strncmp(cmd[0], "unset", 6))
+		return (1);
+	return (0);
+}
+
 void	analize_command(char *command, t_minishell *data)
 {
 	char	***cmds;
-	char	*last_cmd;
+	// char	*last_cmd;
 	int		i;
 	
 	if (!command)
@@ -129,23 +164,27 @@ void	analize_command(char *command, t_minishell *data)
 		cmds = parse_words(command, data);
 		if (cmds && *cmds)
 		{
-			execute_pipeline(cmds, char_cmds_count(cmds), data);
-			last_cmd = NULL;
-			if (!cmds[char_cmds_count(cmds) - 1][1] || !cmds[char_cmds_count(cmds) - 1][2])
-				last_cmd = ft_strdup(cmds[char_cmds_count(cmds) - 1][0]);
+			if (char_cmds_count(cmds) == 1 && changes_shell_state(cmds[0]))
+				execute_command(cmds, data);
+			else
+				execute_pipeline(cmds, char_cmds_count(cmds), data);
+			// last_cmd = NULL;
+			// if (!cmds[char_cmds_count(cmds) - 1][1] || !cmds[char_cmds_count(cmds) - 1][2])
+			// 	last_cmd = ft_strdup(cmds[char_cmds_count(cmds) - 1][0]);
+			// if (last_cmd && !ft_strncmp(last_cmd, "exit", 5))
+			// {
+			// 	free(last_cmd);
+			// 	end_program(data);
+			// 	exit(data->exit_code);
+			// }
+			// free(last_cmd);
+
 			i = 0;
 			while (cmds[i])
 			{
 				free_arr(cmds[i], NULL);
 				i++;
 			}
-			if (last_cmd && !ft_strncmp(last_cmd, "exit", 5))
-			{
-				free(last_cmd);
-				end_program(data);
-				exit(data->exit_code);
-			}
-			free(last_cmd);
 		}
 		if (cmds)
 			free(cmds);

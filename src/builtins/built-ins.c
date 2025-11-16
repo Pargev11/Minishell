@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/08 17:04:15 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/16 18:00:59 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,16 @@ void	cd(char **cmds, t_minishell *data)
 		return ;
 	}
 	else if (arr_sz == 1)
-		dir_to_ch = getenv("HOME");
+		dir_to_ch = get_varible("HOME", data);
 	if (!chdir(dir_to_ch))
 	{
+		// printf("dir = %s\n", dir_to_ch);
 		free(data->cwd);
 		data->cwd = getcwd(NULL, 0);
 	}
 	else
 	{
-		error_str = ft_strjoin("cd: ", cmds[1]);
+		error_str = ft_strjoin("cd: ", dir_to_ch);
 		data->exit_code = 1;
 		perror(error_str);
 		free(error_str);
@@ -70,6 +71,7 @@ void	exit_cmd(char **cmds, t_minishell *data)
 			ft_printfp("bash: exit: %s: numeric argument required\n",
 				cmds[1]);
 			data->exit_code = 2;
+			exit(data->exit_code);
 		}
 	}
 	if (arr_sz > 2)
@@ -77,4 +79,6 @@ void	exit_cmd(char **cmds, t_minishell *data)
 		ft_printfp("bash: exit: too many arguments\n");
 		data->exit_code = 1;
 	}
+	end_program(data);
+	exit(data->exit_code);
 }

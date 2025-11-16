@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/15 15:08:40 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/16 18:18:51 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,10 @@ char	*search_for_path(t_minishell *data, char *program)
 		return (ft_strdup(program));
 	paths = ft_split(dist_path_line(data), ':');
 	if (!paths)
+	{
+		ft_printfp("bash: %s: No such file or directory\n", program);
 		return (free(program), NULL);
+	}
 	arr = paths;
 	while (*paths && ++paths)
 	{

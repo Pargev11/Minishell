@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/15 17:13:18 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/16 17:44:19 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 		}
 		if (command[i] == 0)
 			break ;
-		if (command[i] != '\'' && !ft_isspace(command[i]) && command[i] != '|' && command[i] != '>' && command[i] != '<')
+		if (command[i] != '\'' && command[i] != '"' && command[i] != '|' && command[i] != '>' && command[i] != '<')
 			i++;
 	}
 	
@@ -123,7 +123,13 @@ char	***parse_words(char *cmd, t_minishell *data)
 	char	***cmds;
 
 	cmds_list = parse_to_list(cmd, data);
-	cmds = allocate_cmds(cmds_list);
+	if (cmds_list && *cmds_list && !ft_strncmp((char *)((*cmds_list)->content), "|", 2))
+	{
+		ft_printfp("syntax error near unexpected token `|'\n");
+		cmds = NULL;
+	}
+	else
+		cmds = allocate_cmds(cmds_list);
 	ft_lstclear(cmds_list, free);
 	free(cmds_list);
 	return (cmds);
