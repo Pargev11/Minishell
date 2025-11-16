@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/16 18:35:31 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/16 19:18:02 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,11 @@ int	handle_heredoc(char	**cmds, int j)
 	int		fd[2];
 	char	*line;
 
-	if (cmds[j] == NULL)
-	{
-		ft_printfp("syntax error near unexpected token `newline'\n");
-		return (2);
-	}
+	// if (cmds[j] == NULL)
+	// {
+	// 	ft_printfp("syntax error near unexpected token `newline'\n");
+	// 	return (2);
+	// }
 	pipe(fd);
 	while (1)
 	{
@@ -109,11 +109,11 @@ int	handle_redirects(char ***cmds, int i)
 		else if (!ft_strncmp(operator, "<", 2) || !ft_strncmp(operator, ">", 2) || !ft_strncmp(operator, ">>", 3))
 		{
 			j++;
-			if (cmds[i][j] == NULL || !ft_strncmp(cmds[i][j], "<", 2) || !ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], ">>", 3) || !ft_strncmp(cmds[i][j], "<<", 3))
-			{
-				ft_printfp("syntax error near unexpected token `newline'\n");
-				return (2);
-			}
+			// if (cmds[i][j] == NULL || !ft_strncmp(cmds[i][j], "<", 2) || !ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], ">>", 3) || !ft_strncmp(cmds[i][j], "<<", 3))
+			// {
+			// 	ft_printfp("syntax error near unexpected token `newline'\n");
+			// 	return (2);
+			// }
 			if (!ft_strncmp(operator, "<", 2))
 				ft = open(cmds[i][j], O_RDONLY);
 			else if (!ft_strncmp(operator, ">", 2))

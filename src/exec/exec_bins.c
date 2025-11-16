@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/16 18:18:51 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/16 20:06:58 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	exec(char **cmds, t_minishell *data)
 	}
 	else if (program_path)
 	{
-		ft_printfp("bash: %s: command not found\n", cmds[0]);
+		ft_printfp("%s: command not found\n", cmds[0]);
 		data->exit_code = 127;
 	}
 	free(program_path);

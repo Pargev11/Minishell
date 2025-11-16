@@ -6,7 +6,7 @@
 /*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/16 17:44:19 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/16 19:57:22 by pamalkha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,19 +117,61 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 	return (cmds);
 }
 
+int	check_syntax(t_list	*cmds_list)
+{
+	int		i;
+	char	*content;
+
+	i = 0;
+	while (cmds_list)
+	{
+		content = (char *)(cmds_list->content);
+		if (i == 0 && !ft_strncmp(content, "|", 2))
+		{
+			ft_printfp("syntax error\n");
+			return (0);
+		}
+		if (!ft_strncmp(content, "|", 2))
+		{
+			cmds_list = cmds_list->next;
+			if (!cmds_list || !ft_strncmp((char *)(cmds_list->content), "|", 2))
+			{
+				ft_printfp("syntax error\n");
+				return (0);
+			}
+			i++;
+		}
+		if (!ft_strncmp(content, ">", 2) || !ft_strncmp(content, "<", 2) || !ft_strncmp(content, ">>", 3) || !ft_strncmp(content, "<<", 3))
+		{
+			cmds_list = cmds_list->next;
+			if (cmds_list)
+				content = (char *)(cmds_list->content);
+			if (!cmds_list || !ft_strncmp(content, "|", 2) || !ft_strncmp(content, ">", 2) || !ft_strncmp(content, "<", 2) || !ft_strncmp(content, ">>", 3) || !ft_strncmp(content, "<<", 3))
+			{
+				ft_printfp("syntax error\n");
+				return (0);
+			}
+			i++;
+		}
+		cmds_list = cmds_list->next;
+		i++;
+	}
+	return (1);
+}
+
 char	***parse_words(char *cmd, t_minishell *data)
 {
 	t_list	**cmds_list;
 	char	***cmds;
 
 	cmds_list = parse_to_list(cmd, data);
-	if (cmds_list && *cmds_list && !ft_strncmp((char *)((*cmds_list)->content), "|", 2))
+	if (check_syntax(*cmds_list))
+		cmds = allocate_cmds(cmds_list);
+	else
 	{
-		ft_printfp("syntax error near unexpected token `|'\n");
+		data->exit_code = 2;
 		cmds = NULL;
 	}
-	else
-		cmds = allocate_cmds(cmds_list);
 	ft_lstclear(cmds_list, free);
 	free(cmds_list);
 	return (cmds);
