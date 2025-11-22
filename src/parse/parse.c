@@ -3,14 +3,47 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/16 19:57:22 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/22 15:20:53 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_cmd	*new_cmd(char *cmd, int quotes)
+{
+	t_cmd	*cmd_s;
+
+	cmd_s = (t_cmd *)malloc(sizeof(t_cmd));
+	if (!cmd_s)
+		return (NULL);
+	cmd_s->cmd = cmd;
+	cmd_s->quotes = quotes;
+	return (cmd_s);
+}
+
+void	free_cmd(void *content)
+{
+	t_cmd	*cmd_s;
+
+	cmd_s = content;
+	if (cmd_s)
+	{
+		if (cmd_s->cmd)
+			free(cmd_s->cmd);
+		free(cmd_s);
+	}
+}
+
+t_cmd	*get_cmd(t_list	*cmds_list)
+{
+	t_cmd	*cmd;
+
+	cmd = (t_cmd *)(cmds_list->content);
+	return (cmd);
+}
 
 int	skip_spaces(char *str, int *i)
 {
@@ -48,7 +81,7 @@ char	*substr_by_quot(char *command, char *word, int *start, int *i, t_minishell 
 	return (word);
 }
 
-int	parse_operators(char *command, int i, t_list **cmds)
+int	parse_operators(char *command, int i, t_list **cmds, int is_quotation)
 {
 	char	*operator;
 
@@ -65,7 +98,7 @@ int	parse_operators(char *command, int i, t_list **cmds)
 		operator = ft_strdup("<<");
 	if (operator != NULL)
 	{
-		ft_lstadd_back(cmds, ft_lstnew(operator));
+		ft_lstadd_back(cmds, ft_lstnew(new_cmd(operator, is_quotation)));
 		i += ft_strlen(operator);
 	}
 	return (i);
@@ -100,11 +133,11 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 			{
 				word = ft_strjoin3(word, subst_vars(ft_substr(command, start, i - start), data));
 				if (!(*word == '\0' && !is_quotation))
-					ft_lstadd_back(cmds, ft_lstnew(ft_strdup(word)));
+					ft_lstadd_back(cmds, ft_lstnew(new_cmd(ft_strdup(word), is_quotation)));
 				free(word);
 				word = NULL;
 			}
-			i = parse_operators(command, i, cmds);
+			i = parse_operators(command, i, cmds, is_quotation);
 			is_quotation = 0;
 			start = skip_spaces(command, &i);
 		}
@@ -120,35 +153,40 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 int	check_syntax(t_list	*cmds_list)
 {
 	int		i;
-	char	*content;
+	t_cmd	*content;
 
 	i = 0;
 	while (cmds_list)
 	{
-		content = (char *)(cmds_list->content);
-		if (i == 0 && !ft_strncmp(content, "|", 2))
+		content = get_cmd(cmds_list);
+		if (i == 0 && !content->quotes && !ft_strncmp(content->cmd, "|", 2))
 		{
-			ft_printfp("syntax error\n");
+			ft_printfp("bash: syntax error near unexpected token `|'\n");
 			return (0);
 		}
-		if (!ft_strncmp(content, "|", 2))
+		if (!content->quotes && !ft_strncmp(content->cmd, "|", 2))
 		{
 			cmds_list = cmds_list->next;
-			if (!cmds_list || !ft_strncmp((char *)(cmds_list->content), "|", 2))
+			if (!cmds_list || (!get_cmd(cmds_list)->quotes && !ft_strncmp(get_cmd(cmds_list)->cmd, "|", 2)))
 			{
-				ft_printfp("syntax error\n");
+				ft_printfp("bash: syntax error near unexpected token `|'\n");
 				return (0);
 			}
 			i++;
 		}
-		if (!ft_strncmp(content, ">", 2) || !ft_strncmp(content, "<", 2) || !ft_strncmp(content, ">>", 3) || !ft_strncmp(content, "<<", 3))
+		if (!content->quotes && (!ft_strncmp(content->cmd, ">", 2) || !ft_strncmp(content->cmd, "<", 2) || !ft_strncmp(content->cmd, ">>", 3) || !ft_strncmp(content->cmd, "<<", 3)))
 		{
 			cmds_list = cmds_list->next;
 			if (cmds_list)
-				content = (char *)(cmds_list->content);
-			if (!cmds_list || !ft_strncmp(content, "|", 2) || !ft_strncmp(content, ">", 2) || !ft_strncmp(content, "<", 2) || !ft_strncmp(content, ">>", 3) || !ft_strncmp(content, "<<", 3))
+				content = get_cmd(cmds_list);
+			if (!cmds_list)
 			{
-				ft_printfp("syntax error\n");
+				ft_printfp("bash: syntax error near unexpected token `newline'\n");
+				return (0);
+			}
+			else if (!content->quotes && (!ft_strncmp(content->cmd, "|", 2) || !ft_strncmp(content->cmd, ">", 2) || !ft_strncmp(content->cmd, "<", 2) || !ft_strncmp(content->cmd, ">>", 3) || !ft_strncmp(content->cmd, "<<", 3)))
+			{
+				ft_printfp("bash: syntax error near unexpected token `%s'\n", content->cmd);
 				return (0);
 			}
 			i++;
@@ -159,20 +197,20 @@ int	check_syntax(t_list	*cmds_list)
 	return (1);
 }
 
-char	***parse_words(char *cmd, t_minishell *data)
+char	***parse_words(char *cmd, int ***quote_mask, t_minishell *data)
 {
 	t_list	**cmds_list;
 	char	***cmds;
 
 	cmds_list = parse_to_list(cmd, data);
 	if (check_syntax(*cmds_list))
-		cmds = allocate_cmds(cmds_list);
+		cmds = allocate_cmds(cmds_list, quote_mask);
 	else
 	{
 		data->exit_code = 2;
 		cmds = NULL;
 	}
-	ft_lstclear(cmds_list, free);
+	ft_lstclear(cmds_list, free_cmd);
 	free(cmds_list);
 	return (cmds);
 }

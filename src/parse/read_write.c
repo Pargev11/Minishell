@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_write.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/16 17:30:52 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/22 22:57:40 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	check_exit_code(int commands_count, pid_t *pids)
 	return (exit_code);
 }
 
-void	execute_pipeline(char ***cmds, int commands_count, t_minishell *data)
+void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_minishell *data)
 {
 	int		i;
 	int		fd[2];
@@ -84,7 +84,7 @@ void	execute_pipeline(char ***cmds, int commands_count, t_minishell *data)
 				close(fd[0]);
 				close(fd[1]);
 			}
-			data->exit_code = handle_redirects(cmds, i);
+			data->exit_code = handle_redirects(cmds, i, quote_mask);
 			if (!data->exit_code && cmds[i] && cmds[i][0] && !run_builtin(cmds[i], data))
 				exec(cmds[i], data);
 			exit(data->exit_code);
@@ -150,6 +150,7 @@ void	analize_command(char *command, t_minishell *data)
 {
 	char	***cmds;
 	// char	*last_cmd;
+	int		***quote_mask;
 	int		i;
 	
 	if (!command)
@@ -161,13 +162,14 @@ void	analize_command(char *command, t_minishell *data)
 	if (*command)
 	{
 		add_history(command);
-		cmds = parse_words(command, data);
+		quote_mask = (int ***)malloc(sizeof(int **));
+		cmds = parse_words(command, quote_mask, data);
 		if (cmds && *cmds)
 		{
 			if (char_cmds_count(cmds) == 1 && changes_shell_state(cmds[0]))
 				execute_command(cmds, data);
 			else
-				execute_pipeline(cmds, char_cmds_count(cmds), data);
+				execute_pipeline(cmds, char_cmds_count(cmds), *quote_mask, data);
 			// last_cmd = NULL;
 			// if (!cmds[char_cmds_count(cmds) - 1][1] || !cmds[char_cmds_count(cmds) - 1][2])
 			// 	last_cmd = ft_strdup(cmds[char_cmds_count(cmds) - 1][0]);
@@ -188,6 +190,7 @@ void	analize_command(char *command, t_minishell *data)
 		}
 		if (cmds)
 			free(cmds);
+		free_mask(quote_mask);
 	}
 	free(command);
 }

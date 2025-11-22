@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_bins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/16 20:06:58 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/22 13:20:14 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,9 @@ char	*search_for_path(t_minishell *data, char *program)
 int	exec_child(char *program_path, char **cmds, t_minishell *data)
 {
 	char	**env;
-	int		error_code;
 
 	env = list_to_env(data);
 	execve(program_path, cmds, env);
-	error_code = 0;
 	free_arr(env, NULL);
 	if (!is_dir(program_path))
 	{

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/16 19:18:02 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/22 23:25:19 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	remove_redirects(char ***cmds, int i)
+void	remove_redirects(char ***cmds, int i, int **quote_mask)
 {
 	int		j;
 	int		k;
@@ -23,7 +23,7 @@ void	remove_redirects(char ***cmds, int i)
 	j = 0;
 	while (cmds[i][j])
 	{
-		if (!ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], "<", 2) || !ft_strncmp(cmds[i][j], ">>", 3) || !ft_strncmp(cmds[i][j], "<<", 3))
+		if (!quote_mask[i][j] && (!ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], "<", 2) || !ft_strncmp(cmds[i][j], ">>", 3) || !ft_strncmp(cmds[i][j], "<<", 3)))
 			count += 2;
 		j++;
 	}
@@ -36,7 +36,7 @@ void	remove_redirects(char ***cmds, int i)
 	k = 0;
 	while (cmds[i][j])
 	{
-		if (ft_strncmp(cmds[i][j], ">", 2) && ft_strncmp(cmds[i][j], "<", 2) && ft_strncmp(cmds[i][j], ">>", 3) && ft_strncmp(cmds[i][j], "<<", 3))
+		if (!(!quote_mask[i][j] && (!ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], "<", 2) || !ft_strncmp(cmds[i][j], ">>", 3) || !ft_strncmp(cmds[i][j], "<<", 3))))
 		{
 			new_cmd[k] = ft_strdup(cmds[i][j]);
 			free(cmds[i][j]);
@@ -87,7 +87,7 @@ int	handle_heredoc(char	**cmds, int j)
 	return (0);
 }
 
-int	handle_redirects(char ***cmds, int i)
+int	handle_redirects(char ***cmds, int i, int **quote_mask)
 {
 	int		j;
 	int		ft;
@@ -99,14 +99,14 @@ int	handle_redirects(char ***cmds, int i)
 	while (cmds[i][j])
 	{
 		operator = cmds[i][j];
-		if (!ft_strncmp(operator, "<<", 3))
+		if (!quote_mask[i][j] && !ft_strncmp(operator, "<<", 3))
 		{
 			j++;
 			exit_code = handle_heredoc(cmds[i], j);
 			if (exit_code)
 				return (exit_code);
 		}
-		else if (!ft_strncmp(operator, "<", 2) || !ft_strncmp(operator, ">", 2) || !ft_strncmp(operator, ">>", 3))
+		else if (!quote_mask[i][j] && (!ft_strncmp(operator, "<", 2) || !ft_strncmp(operator, ">", 2) || !ft_strncmp(operator, ">>", 3)))
 		{
 			j++;
 			// if (cmds[i][j] == NULL || !ft_strncmp(cmds[i][j], "<", 2) || !ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], ">>", 3) || !ft_strncmp(cmds[i][j], "<<", 3))
@@ -122,7 +122,8 @@ int	handle_redirects(char ***cmds, int i)
 				ft = open(cmds[i][j], O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (ft < 0)
 			{
-				error_str = ft_strjoin(operator, ": ");
+				error_str = ft_strjoin("bash: ", cmds[i][j]);
+				error_str = ft_strjoin2(error_str, ": ");
 				perror(error_str);
 				free(error_str);
 				return (1);
@@ -140,6 +141,6 @@ int	handle_redirects(char ***cmds, int i)
 		j++;
 	}
 	// printf("=======\n");
-	remove_redirects(cmds, i);
+	remove_redirects(cmds, i, quote_mask);
 	return (0);
 }

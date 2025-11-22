@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/16 14:17:07 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/11/22 22:57:16 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,7 @@ typedef struct s_var_info
 typedef struct s_cmd
 {
 	char	*cmd;
-	int		single_q_start;
-	int		single_q_end;
+	int		quotes;
 }	t_cmd;
 
 typedef struct s_minishell
@@ -65,10 +64,11 @@ void		interrupt_signal(int sig);
 
 //parse
 void		analize_command(char *command, t_minishell *data);
-char		***parse_words(char *cmd, t_minishell *data);
+char		***parse_words(char *cmd, int ***quote_mask, t_minishell *data);
 char		*subst_vars(char *cmd, t_minishell *data);
-char		***allocate_cmds(t_list **cmds_list);
-int			handle_redirects(char ***cmds, int i);
+char		***allocate_cmds(t_list **cmds_list, int ***quote_mask);
+int			handle_redirects(char ***cmds, int i, int **quote_mask);
+t_cmd		*get_cmd(t_list	*cmds_list);
 
 //built-ins
 void		cd(char **cmds, t_minishell *data);
@@ -90,6 +90,7 @@ int			check_name(char *name);
 int			get_arr_sz(char **arr_2d);
 int			is_dir(char const *path);
 void		free_arr(char **arr, char ***cmds);
+void		free_mask(int ***mask);
 
 //envirement variables
 t_var_info	*var_info(char *variable);

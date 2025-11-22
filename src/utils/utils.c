@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/10/12 22:38:21 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/22 22:58:20 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,24 @@ int	is_dir(char const *path)
 	if (S_ISDIR(buf.st_mode))
 		return (1);
 	return (0);
+}
+
+void	free_mask(int ***mask)
+{
+	int	i;
+
+	if (mask)
+	{
+		if (*mask)
+		{
+			i = 0;
+			while ((*mask)[i])
+			{
+				free((*mask)[i]);
+				i++;
+			}
+			free(*mask);
+		}
+		free(mask);
+	}
 }
