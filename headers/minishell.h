@@ -15,6 +15,7 @@
 
 # include "libft.h"
 # include <unistd.h>
+# include <stdint.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <readline/readline.h>
@@ -26,8 +27,6 @@
 # include <sys/stat.h>
 # include <errno.h>
 # include <fcntl.h>
-
-# define SIZE_MAX 10124
 
 typedef struct s_var_info
 {
