@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/22 23:25:19 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/30 23:27:48 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,16 +54,11 @@ void	remove_redirects(char ***cmds, int i, int **quote_mask)
 	cmds[i] = new_cmd;
 }
 
-int	handle_heredoc(char	**cmds, int j)
+int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data)
 {
 	int		fd[2];
 	char	*line;
 
-	// if (cmds[j] == NULL)
-	// {
-	// 	ft_printfp("syntax error near unexpected token `newline'\n");
-	// 	return (2);
-	// }
 	pipe(fd);
 	while (1)
 	{
@@ -74,8 +69,10 @@ int	handle_heredoc(char	**cmds, int j)
 			rl_on_new_line();
 			break;
 		}
-		if (!strcmp(line, cmds[j]))
+		if (!strcmp(line, delimiter))
 			break;
+		if (!quotes)
+			line = subst_vars(line, data);
 		write(fd[1], line, strlen(line));
 		write(fd[1], "\n", 1);
 		free(line);
@@ -87,7 +84,7 @@ int	handle_heredoc(char	**cmds, int j)
 	return (0);
 }
 
-int	handle_redirects(char ***cmds, int i, int **quote_mask)
+int	handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data)
 {
 	int		j;
 	int		ft;
@@ -102,7 +99,7 @@ int	handle_redirects(char ***cmds, int i, int **quote_mask)
 		if (!quote_mask[i][j] && !ft_strncmp(operator, "<<", 3))
 		{
 			j++;
-			exit_code = handle_heredoc(cmds[i], j);
+			exit_code = handle_heredoc(cmds[i][j], quote_mask[i][j], data);
 			if (exit_code)
 				return (exit_code);
 		}

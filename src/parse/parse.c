@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/22 15:20:53 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/01 00:25:11 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,27 @@ int	parse_operators(char *command, int i, t_list **cmds, int is_quotation)
 	return (i);
 }
 
+void	parese_by_spaces(t_list **cmds, char *word, int is_quotation)
+{
+	char	**args;
+	int		i;
+
+	if (is_quotation)
+		ft_lstadd_back(cmds, ft_lstnew(new_cmd(ft_strdup(word), is_quotation)));
+	else if (!is_quotation && *word != '\0')
+	{
+		args = ft_split2(word, " \t\n");
+		i = 0;
+		while (args[i])
+		{
+			ft_lstadd_back(cmds, ft_lstnew(new_cmd(ft_strdup(args[i]), 0)));
+			i++;
+		}
+		free_arr(args, NULL);
+	}
+		
+}
+
 t_list	**parse_to_list(char *command, t_minishell *data)
 {
 	t_list	**cmds;
@@ -132,8 +153,9 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 			if (i > 0 && !ft_isspace(command[i - 1]))
 			{
 				word = ft_strjoin3(word, subst_vars(ft_substr(command, start, i - start), data));
-				if (!(*word == '\0' && !is_quotation))
-					ft_lstadd_back(cmds, ft_lstnew(new_cmd(ft_strdup(word), is_quotation)));
+				parese_by_spaces(cmds, word, is_quotation);
+				// if (!(*word == '\0' && !is_quotation))
+				// 	ft_lstadd_back(cmds, ft_lstnew(new_cmd(ft_strdup(word), is_quotation)));
 				free(word);
 				word = NULL;
 			}

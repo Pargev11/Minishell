@@ -13,7 +13,7 @@ SRC		=	ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c \
 			ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
 			ft_strjoin2.c get_next_line.c ft_atoi_base.c \
 			ft_printf.c ft_printf_utils.c ft_printfp.c ft_printfp_utils.c \
-			ft_strisnum.c ft_strjoin3.c ft_isspace.c
+			ft_strisnum.c ft_strjoin3.c ft_isspace.c ft_split2.c
 
 SRCB	=	ft_lstnew_bonus.c ft_lstadd_front_bonus.c \
 			ft_lstsize_bonus.c ft_lstlast_bonus.c \

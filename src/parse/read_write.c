@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/22 22:57:40 by pargev           ###   ########.fr       */
+/*   Updated: 2025/11/30 23:28:25 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 				close(fd[0]);
 				close(fd[1]);
 			}
-			data->exit_code = handle_redirects(cmds, i, quote_mask);
+			data->exit_code = handle_redirects(cmds, i, quote_mask, data);
 			if (!data->exit_code && cmds[i] && cmds[i][0] && !run_builtin(cmds[i], data))
 				exec(cmds[i], data);
 			exit(data->exit_code);
@@ -189,8 +189,12 @@ void	analize_command(char *command, t_minishell *data)
 			}
 		}
 		if (cmds)
+		{
 			free(cmds);
-		free_mask(quote_mask);
+			free_mask(quote_mask);
+		}
+		else
+			free(quote_mask);
 	}
 	free(command);
 }
