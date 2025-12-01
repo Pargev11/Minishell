@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/30 23:28:25 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/01 15:02:40 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,12 +101,12 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 	data->exit_code = check_exit_code(commands_count, pids);
 }
 
-void	execute_command(char ***cmds, t_minishell *data)
+void	execute_command(char ***cmds, int **quote_mask, t_minishell *data)
 {
 	pid_t	pid;
 	int		status;
 
-	// data->exit_code = handle_redirects(cmds, 0);
+	data->exit_code = handle_redirects(cmds, 0, quote_mask, data);
 	if (cmds[0] && cmds[0][0] && !run_builtin(cmds[0], data))
 	{
 		pid = fork();
@@ -167,7 +167,7 @@ void	analize_command(char *command, t_minishell *data)
 		if (cmds && *cmds)
 		{
 			if (char_cmds_count(cmds) == 1 && changes_shell_state(cmds[0]))
-				execute_command(cmds, data);
+				execute_command(cmds, *quote_mask, data);
 			else
 				execute_pipeline(cmds, char_cmds_count(cmds), *quote_mask, data);
 			// last_cmd = NULL;

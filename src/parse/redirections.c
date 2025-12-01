@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/30 23:27:48 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/01 15:07:26 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data)
 		line = readline("> ");
 		if (!line)
 		{
-			printf("\n");
+			printf("\nbash: warning: here-document at line delimited by end-of-file (wanted `%s')\n", delimiter);
 			rl_on_new_line();
 			break;
 		}
