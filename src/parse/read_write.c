@@ -51,6 +51,7 @@ int	check_exit_code(int commands_count, pid_t *pids)
 		i++;
 	}
 	free(pids);
+	signal(SIGINT, interrupt_signal);
 	return (exit_code);
 }
 
@@ -66,6 +67,7 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 	if (!pids)
 		return ;
 	i = 0;
+	signal(SIGINT, print_nl_handler);
 	while (i < commands_count)
 	{
 		if (i < commands_count - 1)
@@ -109,6 +111,7 @@ void	execute_command(char ***cmds, int **quote_mask, t_minishell *data)
 	data->exit_code = handle_redirects(cmds, 0, quote_mask, data);
 	if (cmds[0] && cmds[0][0] && !run_builtin(cmds[0], data))
 	{
+		signal(SIGINT, print_nl_handler);
 		pid = fork();
 		if (pid == 0)
 		{
@@ -120,6 +123,7 @@ void	execute_command(char ***cmds, int **quote_mask, t_minishell *data)
 			data->exit_code = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			data->exit_code = 128 + WTERMSIG(status);
+		signal(SIGINT, interrupt_signal);
 	}
 }
 
