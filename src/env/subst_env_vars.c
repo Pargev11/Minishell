@@ -47,10 +47,10 @@ char	*strreplace(char *str, char *str_to_replace, char *replacement, int clear_s
 	return (free(p1), free(p2), str);
 }
 
-int	is_a_valid_var_name(char c)
+int	is_a_valid_var_name(char *s)
 {
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-		|| (c >= '0' && c <= '9') || c == '_')
+	if ((*s >= 'a' && *s <= 'z') || (*s >= 'A' && *s <= 'Z')
+		|| (*s >= '0' && *s <= '9' && s[-1] != '$') || *s == '_')
 		return (1);
 	return (0);
 }
@@ -63,7 +63,7 @@ char	*parse_vars(char *cmd, size_t *i, t_minishell *data)
 	size_t	j;
 
 	j = *i + 1;
-	while (is_a_valid_var_name((cmd[j])))
+	while (is_a_valid_var_name(&(cmd[j])))
 		j++;
 	var_name = ft_substr(&(cmd[*i]), 0, j - *i);
 	if (!var_name)

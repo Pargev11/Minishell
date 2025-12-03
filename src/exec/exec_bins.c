@@ -83,11 +83,7 @@ void	exec(char **cmds, t_minishell *data)
 	data->exit_code = 0;
 	program_path = search_for_path(data, cmds[0]);
 	if (program_path && *program_path)
-	{
-		signal(SIGINT, print_nl_handler);
 		data->exit_code = exec_child(program_path, cmds, data);
-		signal(SIGINT, interrupt_signal);
-	}
 	else if (program_path)
 	{
 		ft_printfp("%s: command not found\n", cmds[0]);
