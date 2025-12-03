@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/01 15:02:40 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/04 00:18:42 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,10 @@ void	execute_command(char ***cmds, int **quote_mask, t_minishell *data)
 {
 	pid_t	pid;
 	int		status;
+	int		std_backup[2];
 
+	std_backup[0] = dup(STDIN_FILENO);
+	std_backup[1] = dup(STDOUT_FILENO);
 	data->exit_code = handle_redirects(cmds, 0, quote_mask, data);
 	if (cmds[0] && cmds[0][0] && !run_builtin(cmds[0], data))
 	{
@@ -121,6 +124,10 @@ void	execute_command(char ***cmds, int **quote_mask, t_minishell *data)
 		else if (WIFSIGNALED(status))
 			data->exit_code = 128 + WTERMSIG(status);
 	}
+	dup2(std_backup[0], STDIN_FILENO);
+	dup2(std_backup[1], STDOUT_FILENO);
+	close(std_backup[1]);
+	close(std_backup[1]);
 }
 
 int	char_cmds_count(char ***cmds)

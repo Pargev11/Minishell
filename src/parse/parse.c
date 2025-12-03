@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/12/01 00:25:11 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/03 23:27:12 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ int	parse_operators(char *command, int i, t_list **cmds, int is_quotation)
 		operator = ft_strdup("<<");
 	if (operator != NULL)
 	{
+		// printf("--\n");
 		ft_lstadd_back(cmds, ft_lstnew(new_cmd(operator, is_quotation)));
 		i += ft_strlen(operator);
 	}
@@ -117,7 +118,10 @@ void	parese_by_spaces(t_list **cmds, char *word, int is_quotation)
 		i = 0;
 		while (args[i])
 		{
-			ft_lstadd_back(cmds, ft_lstnew(new_cmd(ft_strdup(args[i]), 0)));
+			if (args[i][0] == '>' || args[i][0] == '<' || args[i][0] == '|')
+				ft_lstadd_back(cmds, ft_lstnew(new_cmd(ft_strdup(args[i]), 1)));
+			else
+				ft_lstadd_back(cmds, ft_lstnew(new_cmd(ft_strdup(args[i]), 0)));
 			i++;
 		}
 		free_arr(args, NULL);
@@ -152,6 +156,7 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 		{
 			if (i > 0 && !ft_isspace(command[i - 1]))
 			{
+				// printf("++\n");
 				word = ft_strjoin3(word, subst_vars(ft_substr(command, start, i - start), data));
 				parese_by_spaces(cmds, word, is_quotation);
 				// if (!(*word == '\0' && !is_quotation))
