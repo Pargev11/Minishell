@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/11/30 23:28:00 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/05 00:07:12 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void		analize_command(char *command, t_minishell *data);
 char		***parse_words(char *cmd, int ***quote_mask, t_minishell *data);
 char		*subst_vars(char *cmd, t_minishell *data);
 char		***allocate_cmds(t_list **cmds_list, int ***quote_mask);
-int			handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data);
+int			handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data, int std_backup[2]);
 t_cmd		*get_cmd(t_list	*cmds_list);
 
 //built-ins

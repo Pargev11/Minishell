@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/04 00:18:42 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/05 00:09:03 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,10 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 	int		fd[2];
 	pid_t	*pids;
 	int		in_fd;
+	int		std_backup[2];
 
+	std_backup[0] = dup(STDIN_FILENO);
+	std_backup[1] = dup(STDOUT_FILENO);
 	in_fd = STDIN_FILENO;
 	pids = (pid_t *)malloc(sizeof(pid_t) * commands_count);
 	if (!pids)
@@ -86,7 +89,7 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 				close(fd[0]);
 				close(fd[1]);
 			}
-			data->exit_code = handle_redirects(cmds, i, quote_mask, data);
+			data->exit_code = handle_redirects(cmds, i, quote_mask, data, std_backup);
 			if (!data->exit_code && cmds[i] && cmds[i][0] && !run_builtin(cmds[i], data))
 				exec(cmds[i], data);
 			exit(data->exit_code);
@@ -111,7 +114,7 @@ void	execute_command(char ***cmds, int **quote_mask, t_minishell *data)
 
 	std_backup[0] = dup(STDIN_FILENO);
 	std_backup[1] = dup(STDOUT_FILENO);
-	data->exit_code = handle_redirects(cmds, 0, quote_mask, data);
+	data->exit_code = handle_redirects(cmds, 0, quote_mask, data, std_backup);
 	if (cmds[0] && cmds[0][0] && !run_builtin(cmds[0], data))
 	{
 		signal(SIGINT, print_nl_handler);

@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/01 15:07:26 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/05 00:25:53 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,16 @@ void	remove_redirects(char ***cmds, int i, int **quote_mask)
 	cmds[i] = new_cmd;
 }
 
-int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data)
+int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data, int std_backup[2])
 {
 	int		fd[2];
 	char	*line;
+	int		std_backup2[2];
 
+	std_backup2[0] = dup(STDIN_FILENO);
+	std_backup2[1] = dup(STDOUT_FILENO);
+	dup2(std_backup[0], STDIN_FILENO);
+	dup2(std_backup[1], STDOUT_FILENO);
 	pipe(fd);
 	while (1)
 	{
@@ -79,12 +84,14 @@ int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data)
 	}
 	free(line);
 	close(fd[1]);
+	dup2(std_backup2[0], STDIN_FILENO);
+	dup2(std_backup2[1], STDOUT_FILENO);
 	dup2(fd[0], STDIN_FILENO);
 	close(fd[0]);
 	return (0);
 }
 
-int	handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data)
+int	handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data, int std_backup[2])
 {
 	int		j;
 	int		ft;
@@ -99,7 +106,7 @@ int	handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data)
 		if (!quote_mask[i][j] && !ft_strncmp(operator, "<<", 3))
 		{
 			j++;
-			exit_code = handle_heredoc(cmds[i][j], quote_mask[i][j], data);
+			exit_code = handle_heredoc(cmds[i][j], quote_mask[i][j], data, std_backup);
 			if (exit_code)
 				return (exit_code);
 		}
