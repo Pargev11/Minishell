@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/05 00:09:03 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/06 00:49:06 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 	pid_t	*pids;
 	int		in_fd;
 	int		std_backup[2];
+	char	buf[4096];
+	ssize_t n;
 
 	std_backup[0] = dup(STDIN_FILENO);
 	std_backup[1] = dup(STDOUT_FILENO);
@@ -73,8 +75,7 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 	signal(SIGINT, print_nl_handler);
 	while (i < commands_count)
 	{
-		if (i < commands_count - 1)
-			pipe(fd);
+		pipe(fd);
 		pids[i] = fork();
 		if (pids[i] == 0)
 		{
@@ -83,12 +84,9 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 				dup2(in_fd, STDIN_FILENO);
 				close(in_fd);
 			}
-			if (i < commands_count - 1)
-			{
-				dup2(fd[1], STDOUT_FILENO);
-				close(fd[0]);
-				close(fd[1]);
-			}
+			dup2(fd[1], STDOUT_FILENO);
+			close(fd[0]);
+			close(fd[1]);
 			data->exit_code = handle_redirects(cmds, i, quote_mask, data, std_backup);
 			if (!data->exit_code && cmds[i] && cmds[i][0] && !run_builtin(cmds[i], data))
 				exec(cmds[i], data);
@@ -96,14 +94,16 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 		}
 		if (in_fd != STDIN_FILENO)
 			close(in_fd);
-		if (i < commands_count - 1)
-		{
-			close(fd[1]);
-			in_fd = fd[0];
-		}
+		close(fd[1]);
+		in_fd = fd[0];
 		i++;
 	}
 	data->exit_code = check_exit_code(commands_count, pids);
+	dup2(std_backup[1], STDOUT_FILENO);
+	close(std_backup[1]);
+	while ((n = read(fd[0], buf, sizeof(buf))) > 0)
+		write(STDOUT_FILENO, buf, n);
+	close(fd[0]);
 }
 
 void	execute_command(char ***cmds, int **quote_mask, t_minishell *data)
