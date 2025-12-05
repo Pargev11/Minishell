@@ -74,11 +74,11 @@ int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data, int std_backu
 			rl_on_new_line();
 			break;
 		}
-		if (!strcmp(line, delimiter))
+		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
 			break;
 		if (!quotes)
 			line = subst_vars(line, data);
-		write(fd[1], line, strlen(line));
+		write(fd[1], line, ft_strlen(line));
 		write(fd[1], "\n", 1);
 		free(line);
 	}
