@@ -77,7 +77,7 @@ int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data, int std_backu
 		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
 			break;
 		if (!quotes)
-			line = subst_vars(line, data);
+			line = subst_vars(line, data, NULL);
 		write(fd[1], line, ft_strlen(line));
 		write(fd[1], "\n", 1);
 		free(line);

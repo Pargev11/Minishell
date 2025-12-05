@@ -53,6 +53,13 @@ typedef struct s_env_info
 	char	*env_value_name;
 }	t_env_info;
 
+typedef struct s_parsing_data
+{
+	int		i;
+	int		start;
+	t_list	**cmds;
+}	t_parsing_data;
+
 //main
 void		init(t_minishell *data);
 void		end_program(t_minishell *data);
@@ -64,7 +71,7 @@ void		interrupt_signal(int sig);
 //parse
 void		analize_command(char *command, t_minishell *data);
 char		***parse_words(char *cmd, int ***quote_mask, t_minishell *data);
-char		*subst_vars(char *cmd, t_minishell *data);
+char		*subst_vars(char *cmd, t_minishell *data, t_list **cmds);
 char		***allocate_cmds(t_list **cmds_list, int ***quote_mask);
 int			handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data, int std_backup[2]);
 t_cmd		*get_cmd(t_list	*cmds_list);

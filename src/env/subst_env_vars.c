@@ -84,12 +84,17 @@ char	*parse_vars(char *cmd, size_t *i, t_minishell *data)
 	return (free(var_name), cmd);
 }
 
-char	*subst_vars(char *cmd, t_minishell *data)
+char	*subst_vars(char *cmd, t_minishell *data, t_list **cmds)
 {
 	size_t		i;
 	char		*exit_code_char;
 
 	i = 0;
+	if (cmds && *cmds)
+	{
+		if (!ft_strcmp(((t_cmd *)(ft_lstlast(*cmds)->content))->cmd, "<<"))
+			return (cmd);
+	}
 	while (cmd[i])
 	{
 		if (cmd[i] == '$' && cmd[i + 1] == '?')

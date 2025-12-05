@@ -52,32 +52,32 @@ int	skip_spaces(char *str, int *i)
 	return (*i);
 }
 
-char	*substr_by_quot(char *command, char *word, int *start, int *i, t_minishell *data)
+char	*substr_by_quot(char *command, char *word, t_parsing_data *d, t_minishell *data)
 {
 	int		first_word_end;
 	char	quote[2];
 	char	*cmd_in_quotes;
 
-	first_word_end = *i;
-	quote[0] = command[*i];
+	first_word_end = d->i;
+	quote[0] = command[d->i];
 	quote[1] = '\0';
-	while (command[*i] != 0)
+	while (command[d->i] != 0)
 	{
-		(*i)++;
-		if (command[*i] == quote[0])
+		(d->i)++;
+		if (command[d->i] == quote[0])
 		{
-			word = ft_strjoin3(word, subst_vars(ft_substr(command, *start, first_word_end - *start), data));
-			cmd_in_quotes = ft_substr(command, first_word_end + 1, *i - first_word_end - 1);
+			word = ft_strjoin3(word, subst_vars(ft_substr(command, d->start, first_word_end - d->start), data, d->cmds));
+			cmd_in_quotes = ft_substr(command, first_word_end + 1, d->i - first_word_end - 1);
 			if (quote[0] == '"')
-				cmd_in_quotes = subst_vars(cmd_in_quotes, data);
+				cmd_in_quotes = subst_vars(cmd_in_quotes, data, d->cmds);
 			word = ft_strjoin3(word, cmd_in_quotes);
-			*start = ++(*i);
+			d->start = ++(d->i);
 			return (word);
 		}
 	}
 	word = ft_strjoin2(word, quote);
-	*i = first_word_end + 1;
-	*start = *i;
+	d->i = first_word_end + 1;
+	d->start = d->i;
 	return (word);
 }
 
@@ -131,50 +131,50 @@ void	parese_by_spaces(t_list **cmds, char *word, int is_quotation)
 
 t_list	**parse_to_list(char *command, t_minishell *data)
 {
-	t_list	**cmds;
-	int		i;
-	int		start;
-	char	*word;
-	int		is_quotation;
+//	t_list			**cmds;
+//	int				i;
+//	int				start;
+	char			*word;
+	int				is_quotation;
+	t_parsing_data	d;
 
-	cmds = (t_list **)malloc(sizeof(t_list *));
-	if (!cmds)
+	d.cmds = (t_list **)malloc(sizeof(t_list *));
+	if (!d.cmds)
 		return (0);
-	*cmds = NULL;
-	i = 0;
-	start = skip_spaces(command, &i);
+	*d.cmds = NULL;
+	d.i = 0;
+	d.start = skip_spaces(command, &d.i);
 	word = NULL;
 	is_quotation = 0;
 	while (1)
 	{
-		if (command[i] == '\'' || command[i] == '"')
+		if (command[d.i] == '\'' || command[d.i] == '"')
 		{
-			word = substr_by_quot(command, word, &start, &i, data);
+			word = substr_by_quot(command, word, &d, data);
 			is_quotation = 1;
 		}
-		if (ft_isspace(command[i]) || command[i] == 0 || command[i] == '|' || command[i] == '>' || command[i] == '<')
+		if (ft_isspace(command[d.i]) || !command[d.i] || ft_strchr("|><", command[d.i]))
 		{
-			if (i > 0 && !ft_isspace(command[i - 1]))
+			if (d.i > 0 && !ft_isspace(command[d.i - 1]))
 			{
 				// printf("++\n");
-				word = ft_strjoin3(word, subst_vars(ft_substr(command, start, i - start), data));
-				parese_by_spaces(cmds, word, is_quotation);
+				word = ft_strjoin3(word, subst_vars(ft_substr(command, d.start, d.i - d.start), data, d.cmds));
+				parese_by_spaces(d.cmds, word, is_quotation);
 				// if (!(*word == '\0' && !is_quotation))
 				// 	ft_lstadd_back(cmds, ft_lstnew(new_cmd(ft_strdup(word), is_quotation)));
 				free(word);
 				word = NULL;
 			}
-			i = parse_operators(command, i, cmds, is_quotation);
+			d.i = parse_operators(command, d.i, d.cmds, is_quotation);
 			is_quotation = 0;
-			start = skip_spaces(command, &i);
+			d.start = skip_spaces(command, &d.i);
 		}
-		if (command[i] == 0)
+		if (command[d.i] == 0)
 			break ;
-		if (command[i] != '\'' && command[i] != '"' && command[i] != '|' && command[i] != '>' && command[i] != '<')
-			i++;
+		if (!ft_strchr("'\"|><", command[d.i]))
+			d.i++;
 	}
-	
-	return (cmds);
+	return (d.cmds);
 }
 
 int	check_syntax(t_list	*cmds_list)
