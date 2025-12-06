@@ -28,7 +28,7 @@ void	export_variables(char **cmds, t_minishell *data)
 		}
 		else
 		{
-			variable_info = var_info(cmds[i]);
+			variable_info = var_info(cmds[i], data);
 			if (check_name(variable_info->name))
 			{
 				lst_add_sorted(data->env_list, ft_lstnew(variable_info));

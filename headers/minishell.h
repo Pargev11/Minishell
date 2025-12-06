@@ -99,7 +99,7 @@ void		free_arr(char **arr, char ***cmds);
 void		free_mask(int ***mask);
 
 //envirement variables
-t_var_info	*var_info(char *variable);
+t_var_info	*var_info(char *variable, t_minishell *data);
 t_list		**env_to_list(void);
 char		**list_to_env(t_minishell *data);
 void		lst_add_sorted(t_list **lst, t_list *new);

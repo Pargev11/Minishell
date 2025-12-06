@@ -12,7 +12,23 @@
 
 #include "minishell.h"
 
-t_var_info	*var_info(char *variable)
+void	var_info_pt2(char *variable, char *var_name_end, t_var_info *variable_info, t_minishell *data)
+{
+	int 	var_name_size;
+	char	*value;
+	char	*old_value;
+
+	var_name_size = (var_name_end - variable);
+	variable_info->name = ft_substr(variable, 0, var_name_size - 1);
+	old_value = get_varible(variable_info->name, data);
+	if (!old_value)
+		old_value = "";
+	value = ft_substr(variable, var_name_size + 1, ft_strlen(variable) - var_name_size);
+	variable_info->value = ft_strjoin(old_value, value);
+	free(value);
+}
+
+t_var_info	*var_info(char *variable, t_minishell *data)
 {
 	char		*var_name_end;
 	t_var_info	*variable_info;
@@ -24,16 +40,18 @@ t_var_info	*var_info(char *variable)
 	var_name_end = ft_strchr(variable, '=');
 	if (var_name_end == 0)
 	{
-		var_name_size = ft_strlen(variable);
+		variable_info->name = ft_substr(variable, 0, ft_strlen(variable));
 		variable_info->value = NULL;
 	}
+	else if (var_name_end[-1] == '+' && data)
+		var_info_pt2(variable, var_name_end, variable_info, data);
 	else
 	{
 		var_name_size = var_name_end - variable;
 		variable_info->value = ft_substr(variable, var_name_size + 1,
 				ft_strlen(variable) - var_name_size);
+		variable_info->name = ft_substr(variable, 0, var_name_size);
 	}
-	variable_info->name = ft_substr(variable, 0, var_name_size);
 	return (variable_info);
 }
 
@@ -70,7 +88,7 @@ t_list	**env_to_list(void)
 	*env_list = NULL;
 	while (*environ)
 	{
-		variable_info = var_info(*environ);
+		variable_info = var_info(*environ, NULL);
 		if (ft_strncmp(variable_info->name, "SHLVL", 6) == 0)
 			increase_shlvl(variable_info);
 		lst_add_sorted(env_list, ft_lstnew(variable_info));
