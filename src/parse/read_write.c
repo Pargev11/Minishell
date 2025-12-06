@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/06 00:49:06 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/06 12:50:06 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ void	execute_pipeline(char ***cmds, int commands_count, int **quote_mask, t_mini
 	}
 	data->exit_code = check_exit_code(commands_count, pids);
 	dup2(std_backup[1], STDOUT_FILENO);
+	close(std_backup[0]);
 	close(std_backup[1]);
 	while ((n = read(fd[0], buf, sizeof(buf))) > 0)
 		write(STDOUT_FILENO, buf, n);

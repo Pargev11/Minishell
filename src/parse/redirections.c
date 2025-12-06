@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/05 00:25:53 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/06 12:46:46 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,9 @@ int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data, int std_backu
 		free(line);
 	}
 	free(line);
-	close(fd[1]);
 	dup2(std_backup2[0], STDIN_FILENO);
 	dup2(std_backup2[1], STDOUT_FILENO);
+	close(fd[1]);
 	dup2(fd[0], STDIN_FILENO);
 	close(fd[0]);
 	return (0);
