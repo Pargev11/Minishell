@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/12/07 20:21:46 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 20:35:29 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ char	*search_for_path(char *program, t_minishell *data)
 	char	**paths;
 	char	**arr;
 	char	*fullpath;
-	char	*tmpline;
 
 	if (ft_strchr(program, '/'))
 		return (ft_strdup(program));
@@ -46,9 +45,7 @@ char	*search_for_path(char *program, t_minishell *data)
 	while (*paths && ++paths)
 	{
 		fullpath = ft_strjoin(paths[-1], "/");
-		tmpline = fullpath;
-		fullpath = ft_strjoin(fullpath, program);
-		free(tmpline);
+		fullpath = ft_strjoin2(fullpath, program);
 		if (!fullpath || (!access(fullpath, F_OK) && !is_dir(fullpath)))
 			return (free_arr(arr, NULL), fullpath);
 		free(fullpath);

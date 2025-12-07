@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/07 20:22:15 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 23:47:00 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ typedef struct s_parsing_data
 	int		i;
 	int		start;
 	t_list	**cmds;
+	int		is_quotation;
+	char	*word;
 }	t_parsing_data;
 
 //main
@@ -78,12 +80,19 @@ void		print_nl_handler_and_exit(int sig);
 
 //parse
 void		analize_command(char *command, t_minishell *data);
+t_list		**parse_to_list(char *command, t_minishell *data);
+t_cmd		*new_cmd(char *cmd, int quotes);
+void		free_cmd(void *content);
+t_cmd		*get_cmd(t_list	*cmds_list);
+int			skip_spaces(char *str, int *i);
 t_cmds		parse_words(char *cmd, t_minishell *data);
 char		*subst_vars(char *cmd, t_minishell *data, t_list **cmds);
 void		allocate_cmds(t_list **cmds_list, t_cmds *cmds);
-int			handle_redirects(t_cmds *cmds, int i, int *fd_index);
-int			handle_heredoc(char	*delimiter, int quotes, t_minishell *data);
 t_cmd		*get_cmd(t_list	*cmds_list);
+int			is_redirection(char *str);
+void		remove_redirects(char ***cmds, int i, int **quote_mask);
+int			parse_operators(char *command, int i, t_list **cmds,
+				int is_quotation);
 
 //built-ins
 void		cd(char **cmds, t_minishell *data);
@@ -94,9 +103,14 @@ void		export(char **cmds, t_minishell *data);
 void		env(char **cmds, t_minishell *data);
 void		unset(char **cmds, t_minishell *data);
 
-//bins execution
+//execution
 void		exec(char **cmds, t_minishell *data);
-char		*dist_path_line(t_minishell *data);
+void		execute_command(t_cmds *cmds, t_minishell *data);
+void		execute_pipeline(t_cmds *cmds, int commands_count,
+				t_minishell *data);
+int			run_builtin(char **cmds, t_minishell *data);
+int			handle_redirects(t_cmds *cmds, int i, int *fd_index);
+int			handle_heredoc(char	*delimiter, int quotes, t_minishell *data);
 
 //utils
 int			ft_strcmp(const char *s1, const char *s2);

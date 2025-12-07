@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/12/07 18:48:48 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 20:37:26 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ int	command_len(t_list *cmd)
 	int	size;
 
 	size = 0;
-	while (cmd != NULL && !(!get_cmd(cmd)->quotes && !ft_strncmp(get_cmd(cmd)->cmd, "|", 2)))
+	while (cmd != NULL && !(!get_cmd(cmd)->quotes
+			&& !ft_strncmp(get_cmd(cmd)->cmd, "|", 2)))
 	{
 		size++;
 		cmd = cmd->next;
@@ -58,7 +59,8 @@ char	**allocate_cmd(t_list **cmd, int **quote_mask, int i)
 		cmd_c[j] = ft_strdup(get_cmd(*cmd)->cmd);
 		quote_mask[i][j] = get_cmd(*cmd)->quotes;
 		*cmd = (*cmd)->next;
-		if (*cmd && !get_cmd(*cmd)->quotes && ft_strncmp(get_cmd(*cmd)->cmd, "|", 2) == 0)
+		if (*cmd && !get_cmd(*cmd)->quotes
+			&& ft_strncmp(get_cmd(*cmd)->cmd, "|", 2) == 0)
 			*cmd = (*cmd)->next;
 		j++;
 	}

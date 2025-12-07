@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/12/07 18:56:10 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 20:30:32 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ int	is_dir(char const *path)
 void	free_mask(int **mask)
 {
 	int	i;
-
 
 	if (mask)
 	{
