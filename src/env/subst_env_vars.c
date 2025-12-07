@@ -12,39 +12,33 @@
 
 #include "minishell.h"
 
-char	*strreplace(char *str, char *str_to_replace, char *replacement, int clear_sources)
+char	*strreplace(char *str, char *str_to_replace, char *replacement)
 {
-	char	*needle_p;
-	char	*p1;
-	char	*p2;
+	char	*ptr_arr[3];
 	size_t	i;
 
 	i = 0;
-	needle_p = ft_strnstr(str, str_to_replace, SIZE_MAX);
-	if (!needle_p)
+	ptr_arr[2] = ft_strnstr(str, str_to_replace, SIZE_MAX);
+	if (!ptr_arr[2])
 		return (NULL);
-	while (&(str[i]) != needle_p)
+	while (&(str[i]) != ptr_arr[2])
 		i++;
-	p1 = ft_substr(str, 0, i);
-	if (!p1)
+	ptr_arr[0] = ft_substr(str, 0, i);
+	if (!ptr_arr[0])
 		return (NULL);
-	p2 = ft_substr(str, i + ft_strlen(str_to_replace), SIZE_MAX);
-	if (!p2)
-		return (free(p1), NULL);
+	ptr_arr[1] = ft_substr(str, i + ft_strlen(str_to_replace), SIZE_MAX);
+	if (!ptr_arr[1])
+		return (free(ptr_arr[0]), NULL);
 	if (!replacement)
-		needle_p = p1;
+		ptr_arr[2] = ptr_arr[0];
 	else
-		needle_p = ft_strjoin(p1, replacement);
-	if (!needle_p)
-		return (free(p1), free(p2), NULL);
-	if (clear_sources)
-		free(str);
-	str = ft_strjoin(needle_p, p2);
-	if (clear_sources)
-		free(replacement);
+		ptr_arr[2] = ft_strjoin(ptr_arr[0], replacement);
+	if (!ptr_arr[2])
+		return (free(ptr_arr[0]), free(ptr_arr[1]), NULL);
+	str = ft_strjoin(ptr_arr[2], ptr_arr[1]);
 	if (replacement)
-		free(needle_p);
-	return (free(p1), free(p2), str);
+		free(ptr_arr[2]);
+	return (free(ptr_arr[0]), free(ptr_arr[1]), str);
 }
 
 int	is_a_valid_var_name(char *s)
@@ -69,7 +63,7 @@ char	*parse_vars(char *cmd, size_t *i, t_minishell *data)
 	if (!var_name)
 		return (perror(NULL), cmd);
 	env_value = get_varible(var_name + 1, data);
-	new_arg_str = strreplace(cmd, var_name, env_value, 0);
+	new_arg_str = strreplace(cmd, var_name, env_value);
 	if (new_arg_str)
 	{
 		free(cmd);
@@ -88,20 +82,22 @@ char	*subst_vars(char *cmd, t_minishell *data, t_list **cmds)
 {
 	size_t		i;
 	char		*exit_code_char;
+	char		*tmp_str;
 
 	i = 0;
 	if (cmds && *cmds)
-	{
 		if (!ft_strcmp(((t_cmd *)(ft_lstlast(*cmds)->content))->cmd, "<<"))
 			return (cmd);
-	}
 	while (cmd[i])
 	{
 		if (cmd[i] == '$' && cmd[i + 1] == '?')
 		{
 			exit_code_char = ft_itoa(data->exit_code);
 			i += ft_strlen(exit_code_char) - 1;
-			cmd = strreplace(cmd, "$?", exit_code_char, 1);
+			tmp_str = cmd;
+			cmd = strreplace(cmd, "$?", exit_code_char);
+			free(tmp_str);
+			free(exit_code_char);
 		}
 		if (cmd[i] == '$' && cmd[i + 1] != '\0' && !ft_isspace(cmd[i + 1]))
 			cmd = parse_vars(cmd, &i, data);
