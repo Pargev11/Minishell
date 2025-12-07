@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/12/07 16:15:30 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/08 00:15:08 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,10 @@ void	pwd(char **cmds, t_minishell *data)
 
 void	exit_cmd(char **cmds, t_minishell *data)
 {
-	int	arr_sz;
-
-	arr_sz = get_arr_sz(cmds);
 	if (cmds == NULL)
 		printf("\n");
 	printf("exit\n");
-	if (arr_sz >= 2)
+	if (get_arr_sz(cmds) >= 2)
 	{
 		data->exit_code = ft_atoi(cmds[1]);
 		if (!(*cmds[1]) || !(ft_isdigit(*cmds[1]) || *cmds[1] == '-'
@@ -72,10 +69,11 @@ void	exit_cmd(char **cmds, t_minishell *data)
 			exit(data->exit_code);
 		}
 	}
-	if (arr_sz > 2)
+	if (get_arr_sz(cmds) > 2)
 	{
 		ft_printfp("bash: exit: too many arguments\n");
 		data->exit_code = 1;
+		return ;
 	}
 	end_program(data);
 	exit(data->exit_code);
