@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/12/07 15:42:24 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 18:56:10 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,21 +69,18 @@ int	is_dir(char const *path)
 	return (0);
 }
 
-void	free_mask(int ***mask)
+void	free_mask(int **mask)
 {
 	int	i;
 
+
 	if (mask)
 	{
-		if (*mask)
+		i = 0;
+		while (mask[i])
 		{
-			i = 0;
-			while ((*mask)[i])
-			{
-				free((*mask)[i]);
-				i++;
-			}
-			free(*mask);
+			free(mask[i]);
+			i++;
 		}
 		free(mask);
 	}

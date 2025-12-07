@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/22 22:56:53 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 18:48:48 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,30 +67,28 @@ char	**allocate_cmd(t_list **cmd, int **quote_mask, int i)
 	return (cmd_c);
 }
 
-char	***allocate_cmds(t_list **cmds_list, int ***quote_mask)
+void	allocate_cmds(t_list **cmds_list, t_cmds *cmds)
 {
 	t_list	**cmd;
-	char	***cmds;
 	int		count;
 	int		i;
 
 	cmd = (t_list **)malloc(sizeof(t_list *));
 	if (!cmd)
-		return (0);
+		return ;
 	*cmd = *cmds_list;
 	count = cmds_count(*cmd);
-	cmds = (char ***)malloc(sizeof(char **) * (count + 1));
-	*quote_mask = (int **)malloc(sizeof(int *) * (count + 1));
-	if (!cmds || !*quote_mask)
-		return (0);
+	cmds->cmds = (char ***)malloc(sizeof(char **) * (count + 1));
+	cmds->quote_mask = (int **)malloc(sizeof(int *) * (count + 1));
+	if (!cmds->cmds || !cmds->quote_mask)
+		return ;
 	i = 0;
 	while (i < count)
 	{
-		cmds[i] = allocate_cmd(cmd, *quote_mask, i);
+		cmds->cmds[i] = allocate_cmd(cmd, cmds->quote_mask, i);
 		i++;
 	}
-	cmds[i] = 0;
-	(*quote_mask)[i] = 0;
+	cmds->cmds[i] = 0;
+	(cmds->quote_mask)[i] = 0;
 	free(cmd);
-	return (cmds);
 }

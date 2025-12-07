@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:30:58 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/05 00:07:12 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 20:22:15 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,13 @@ typedef struct s_cmd
 	int		quotes;
 }	t_cmd;
 
+typedef struct s_cmds
+{
+	char	***cmds;
+	int		**quote_mask;
+	int		*stdin_fd;
+}	t_cmds;
+
 typedef struct s_minishell
 {
 	char	*cwd;
@@ -67,13 +74,15 @@ void		end_program(t_minishell *data);
 //signals
 void		print_nl_handler(int sig);
 void		interrupt_signal(int sig);
+void		print_nl_handler_and_exit(int sig);
 
 //parse
 void		analize_command(char *command, t_minishell *data);
-char		***parse_words(char *cmd, int ***quote_mask, t_minishell *data);
+t_cmds		parse_words(char *cmd, t_minishell *data);
 char		*subst_vars(char *cmd, t_minishell *data, t_list **cmds);
-char		***allocate_cmds(t_list **cmds_list, int ***quote_mask);
-int			handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data, int std_backup[2]);
+void		allocate_cmds(t_list **cmds_list, t_cmds *cmds);
+int			handle_redirects(t_cmds *cmds, int i, int *fd_index);
+int			handle_heredoc(char	*delimiter, int quotes, t_minishell *data);
 t_cmd		*get_cmd(t_list	*cmds_list);
 
 //built-ins
@@ -87,7 +96,6 @@ void		unset(char **cmds, t_minishell *data);
 
 //bins execution
 void		exec(char **cmds, t_minishell *data);
-char		*search_for_path(t_minishell *data, char *program);
 char		*dist_path_line(t_minishell *data);
 
 //utils
@@ -96,7 +104,7 @@ int			check_name(char *name);
 int			get_arr_sz(char **arr_2d);
 int			is_dir(char const *path);
 void		free_arr(char **arr, char ***cmds);
-void		free_mask(int ***mask);
+void		free_mask(int **mask);
 
 //envirement variables
 t_var_info	*var_info(char *variable, t_minishell *data);

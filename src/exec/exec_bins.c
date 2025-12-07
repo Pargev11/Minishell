@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:24:31 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/12/07 15:56:48 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 20:21:46 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*dist_path_line(t_minishell *data)
 	return (NULL);
 }
 
-char	*search_for_path(t_minishell *data, char *program)
+char	*search_for_path(char *program, t_minishell *data)
 {
 	char	**paths;
 	char	**arr;
@@ -39,6 +39,7 @@ char	*search_for_path(t_minishell *data, char *program)
 	if (!paths)
 	{
 		ft_printfp("bash: %s: No such file or directory\n", program);
+		data->exit_code = 127;
 		return (free(program), NULL);
 	}
 	arr = paths;
@@ -78,7 +79,7 @@ void	exec(char **cmds, t_minishell *data)
 	char	*program_path;
 
 	data->exit_code = 0;
-	program_path = search_for_path(data, cmds[0]);
+	program_path = search_for_path(cmds[0], data);
 	if (program_path && *program_path)
 		data->exit_code = exec_child(program_path, cmds, data);
 	else if (program_path)

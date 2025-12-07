@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/08/10 18:08:04 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/12/07 19:52:13 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,4 +25,11 @@ void	print_nl_handler(int sig)
 {
 	(void)sig;
 	printf("\n");
+}
+
+void	print_nl_handler_and_exit(int sig)
+{
+	(void)sig;
+	printf("\n");
+	exit(130);
 }

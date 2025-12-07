@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/06 12:46:46 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 19:57:47 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,79 +54,76 @@ void	remove_redirects(char ***cmds, int i, int **quote_mask)
 	cmds[i] = new_cmd;
 }
 
-int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data, int std_backup[2])
+int	handle_heredoc(char	*delimiter, int quotes, t_minishell *data)
 {
 	int		fd[2];
 	char	*line;
-	int		std_backup2[2];
+	pid_t	pid;
+	int		status;
 
-	std_backup2[0] = dup(STDIN_FILENO);
-	std_backup2[1] = dup(STDOUT_FILENO);
-	dup2(std_backup[0], STDIN_FILENO);
-	dup2(std_backup[1], STDOUT_FILENO);
+	signal(SIGINT, SIG_IGN);
 	pipe(fd);
-	while (1)
+	pid = fork();
+	if (pid == 0)
 	{
-		line = readline("> ");
-		if (!line)
+		signal(SIGINT, print_nl_handler_and_exit);
+		while (1)
 		{
-			printf("\nbash: warning: here-document at line delimited by end-of-file (wanted `%s')\n", delimiter);
-			rl_on_new_line();
-			break;
+			line = readline("> ");
+			if (!line)
+			{
+				printf("\nbash: warning: here-document at line delimited by end-of-file (wanted `%s')\n", delimiter);
+				rl_on_new_line();
+				break;
+			}
+			if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
+				break;
+			if (!quotes)
+				line = subst_vars(line, data, NULL);
+			write(fd[1], line, ft_strlen(line));
+			write(fd[1], "\n", 1);
+			free(line);
 		}
-		if (!ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
-			break;
-		if (!quotes)
-			line = subst_vars(line, data, NULL);
-		write(fd[1], line, ft_strlen(line));
-		write(fd[1], "\n", 1);
 		free(line);
+		exit(0);
 	}
-	free(line);
-	dup2(std_backup2[0], STDIN_FILENO);
-	dup2(std_backup2[1], STDOUT_FILENO);
+	waitpid(pid, &status, 0);
+	if (WEXITSTATUS(status) != 0)
+		return (-1);
+	signal(SIGINT, interrupt_signal);
 	close(fd[1]);
-	dup2(fd[0], STDIN_FILENO);
-	close(fd[0]);
-	return (0);
+	return (fd[0]);
 }
 
-int	handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data, int std_backup[2])
+int	handle_redirects(t_cmds *cmds, int i, int *fd_index)
 {
 	int		j;
 	int		ft;
 	char	*error_str;
 	char	*operator;
-	int		exit_code;
 
 	j = 0;
-	while (cmds[i][j])
+	while (cmds->cmds[i][j])
 	{
-		operator = cmds[i][j];
-		if (!quote_mask[i][j] && !ft_strncmp(operator, "<<", 3))
+		operator = cmds->cmds[i][j];
+		if (!cmds->quote_mask[i][j] && !ft_strncmp(operator, "<<", 3))
 		{
-			j++;
-			exit_code = handle_heredoc(cmds[i][j], quote_mask[i][j], data, std_backup);
-			if (exit_code)
-				return (exit_code);
+			dup2(cmds->stdin_fd[*fd_index], STDIN_FILENO);
+			close(cmds->stdin_fd[*fd_index]);
+			*fd_index = *fd_index + 1;
 		}
-		else if (!quote_mask[i][j] && (!ft_strncmp(operator, "<", 2) || !ft_strncmp(operator, ">", 2) || !ft_strncmp(operator, ">>", 3)))
+		else if (!cmds->quote_mask[i][j] && (!ft_strncmp(operator, "<", 2) || !ft_strncmp(operator, ">", 2) || !ft_strncmp(operator, ">>", 3)))
 		{
 			j++;
-			// if (cmds[i][j] == NULL || !ft_strncmp(cmds[i][j], "<", 2) || !ft_strncmp(cmds[i][j], ">", 2) || !ft_strncmp(cmds[i][j], ">>", 3) || !ft_strncmp(cmds[i][j], "<<", 3))
-			// {
-			// 	ft_printfp("syntax error near unexpected token `newline'\n");
-			// 	return (2);
-			// }
 			if (!ft_strncmp(operator, "<", 2))
-				ft = open(cmds[i][j], O_RDONLY);
+				ft = open(cmds->cmds[i][j], O_RDONLY);
 			else if (!ft_strncmp(operator, ">", 2))
-				ft = open(cmds[i][j], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				ft = open(cmds->cmds[i][j], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			else if (!ft_strncmp(operator, ">>", 3))
-				ft = open(cmds[i][j], O_WRONLY | O_CREAT | O_APPEND, 0644);
+				ft = open(cmds->cmds[i][j], O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (ft < 0)
 			{
-				error_str = ft_strjoin("bash: ", cmds[i][j]);
+				error_str = ft_strjoin("bash: ", cmds->cmds[i][j]);
 				error_str = ft_strjoin2(error_str, ": ");
 				perror(error_str);
 				free(error_str);
@@ -138,13 +135,11 @@ int	handle_redirects(char ***cmds, int i, int **quote_mask, t_minishell *data, i
 					dup2(ft, STDIN_FILENO);
 				else if (!ft_strncmp(operator, ">", 2) || !ft_strncmp(operator, ">>", 3))
 					dup2(ft, STDOUT_FILENO);
-				// printf("====\n");
 				close(ft);
 			}
 		}
 		j++;
 	}
-	// printf("=======\n");
-	remove_redirects(cmds, i, quote_mask);
+	remove_redirects(cmds->cmds, i, cmds->quote_mask);
 	return (0);
 }

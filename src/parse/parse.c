@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/12/03 23:27:12 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 19:58:20 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,46 +177,64 @@ t_list	**parse_to_list(char *command, t_minishell *data)
 	return (d.cmds);
 }
 
-int	check_syntax(t_list	*cmds_list)
+int	check_syntax(t_list	*cmds_list, int i)
 {
-	int		i;
 	t_cmd	*content;
 
-	i = 0;
-	while (cmds_list)
+	content = get_cmd(cmds_list);
+	if (i == 0 && !content->quotes && !ft_strncmp(content->cmd, "|", 2))
 	{
-		content = get_cmd(cmds_list);
-		if (i == 0 && !content->quotes && !ft_strncmp(content->cmd, "|", 2))
+		ft_printfp("bash: syntax error near unexpected token `|'\n");
+		return (0);
+	}
+	if (!content->quotes && !ft_strncmp(content->cmd, "|", 2))
+	{
+		cmds_list = cmds_list->next;
+		if (!cmds_list || (!get_cmd(cmds_list)->quotes && !ft_strncmp(get_cmd(cmds_list)->cmd, "|", 2)))
 		{
 			ft_printfp("bash: syntax error near unexpected token `|'\n");
 			return (0);
 		}
-		if (!content->quotes && !ft_strncmp(content->cmd, "|", 2))
+		i++;
+	}
+	if (!content->quotes && (!ft_strncmp(content->cmd, ">", 2) || !ft_strncmp(content->cmd, "<", 2) || !ft_strncmp(content->cmd, ">>", 3) || !ft_strncmp(content->cmd, "<<", 3)))
+	{
+		cmds_list = cmds_list->next;
+		if (cmds_list)
+			content = get_cmd(cmds_list);
+		if (!cmds_list)
 		{
-			cmds_list = cmds_list->next;
-			if (!cmds_list || (!get_cmd(cmds_list)->quotes && !ft_strncmp(get_cmd(cmds_list)->cmd, "|", 2)))
-			{
-				ft_printfp("bash: syntax error near unexpected token `|'\n");
-				return (0);
-			}
-			i++;
+			ft_printfp("bash: syntax error near unexpected token `newline'\n");
+			return (0);
 		}
-		if (!content->quotes && (!ft_strncmp(content->cmd, ">", 2) || !ft_strncmp(content->cmd, "<", 2) || !ft_strncmp(content->cmd, ">>", 3) || !ft_strncmp(content->cmd, "<<", 3)))
+		else if (!content->quotes && (!ft_strncmp(content->cmd, "|", 2) || !ft_strncmp(content->cmd, ">", 2) || !ft_strncmp(content->cmd, "<", 2) || !ft_strncmp(content->cmd, ">>", 3) || !ft_strncmp(content->cmd, "<<", 3)))
 		{
-			cmds_list = cmds_list->next;
-			if (cmds_list)
-				content = get_cmd(cmds_list);
-			if (!cmds_list)
-			{
-				ft_printfp("bash: syntax error near unexpected token `newline'\n");
+			ft_printfp("bash: syntax error near unexpected token `%s'\n", content->cmd);
+			return (0);
+		}
+		i++;
+	}
+	return (1);
+}
+
+int	process_commands(t_list *cmds_list, t_cmds *cmds, t_minishell *data)
+{
+	int	i;
+	int	j;
+
+	cmds->stdin_fd = (int *)malloc(sizeof(int) * (ft_lstsize(cmds_list) + 1));
+	i = 0;
+	j = 0;
+	while (cmds_list)
+	{
+		if (!check_syntax(cmds_list, i))
+			return (0);
+		if (!ft_strncmp(get_cmd(cmds_list)->cmd, "<<", 3))
+		{
+			cmds->stdin_fd[j] = handle_heredoc(get_cmd(cmds_list->next)->cmd, get_cmd(cmds_list)->quotes, data);
+			if (cmds->stdin_fd[j] < 0)
 				return (0);
-			}
-			else if (!content->quotes && (!ft_strncmp(content->cmd, "|", 2) || !ft_strncmp(content->cmd, ">", 2) || !ft_strncmp(content->cmd, "<", 2) || !ft_strncmp(content->cmd, ">>", 3) || !ft_strncmp(content->cmd, "<<", 3)))
-			{
-				ft_printfp("bash: syntax error near unexpected token `%s'\n", content->cmd);
-				return (0);
-			}
-			i++;
+			j++;
 		}
 		cmds_list = cmds_list->next;
 		i++;
@@ -224,18 +242,19 @@ int	check_syntax(t_list	*cmds_list)
 	return (1);
 }
 
-char	***parse_words(char *cmd, int ***quote_mask, t_minishell *data)
+t_cmds	parse_words(char *cmd, t_minishell *data)
 {
 	t_list	**cmds_list;
-	char	***cmds;
+	t_cmds	cmds;
 
 	cmds_list = parse_to_list(cmd, data);
-	if (check_syntax(*cmds_list))
-		cmds = allocate_cmds(cmds_list, quote_mask);
+	if (process_commands(*cmds_list, &cmds, data))
+		allocate_cmds(cmds_list, &cmds);
 	else
 	{
 		data->exit_code = 2;
-		cmds = NULL;
+		cmds.cmds = NULL;
+		cmds.quote_mask = NULL;
 	}
 	ft_lstclear(cmds_list, free_cmd);
 	free(cmds_list);
