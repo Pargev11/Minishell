@@ -22,16 +22,13 @@ void	cd(char **cmds, t_minishell *data)
 	arr_sz = get_arr_sz(cmds);
 	dir_to_ch = cmds[1];
 	if (arr_sz > 2)
-	{
 		data->exit_code = 1;
-		ft_putendl_fd("cd: too many arguments", 2);
-		return ;
-	}
+	if (arr_sz > 2)
+		return ((void)ft_putendl_fd("cd: too many arguments", 2));
 	else if (arr_sz == 1)
 		dir_to_ch = get_varible("HOME", data);
 	if (!chdir(dir_to_ch))
 	{
-		// printf("dir = %s\n", dir_to_ch);
 		free(data->cwd);
 		data->cwd = getcwd(NULL, 0);
 	}
@@ -66,7 +63,8 @@ void	exit_cmd(char **cmds, t_minishell *data)
 	if (arr_sz >= 2)
 	{
 		data->exit_code = ft_atoi(cmds[1]);
-		if (!(*cmds[1]) || !(ft_isdigit(*cmds[1]) || *cmds[1] == '-' || *cmds[1] == '+') || !ft_strisnum(&cmds[1][1]))
+		if (!(*cmds[1]) || !(ft_isdigit(*cmds[1]) || *cmds[1] == '-'
+				|| *cmds[1] == '+') || !ft_strisnum(&cmds[1][1]))
 		{
 			ft_printfp("bash: exit: %s: numeric argument required\n",
 				cmds[1]);

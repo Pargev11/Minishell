@@ -22,17 +22,14 @@ void	export_variables(char **cmds, t_minishell *data)
 	while (cmds[i])
 	{
 		if (*cmds[i] == '=')
-		{
 			ft_printfp("bash: export: `%s': not a valid identifier\n", cmds[i]);
+		if (*cmds[i++] == '=')
 			data->exit_code = 1;
-		}
 		else
 		{
-			variable_info = var_info(cmds[i], data);
+			variable_info = var_info(cmds[i - 1], data);
 			if (check_name(variable_info->name))
-			{
 				lst_add_sorted(data->env_list, ft_lstnew(variable_info));
-			}
 			else
 			{
 				data->exit_code = 1;
@@ -41,7 +38,6 @@ void	export_variables(char **cmds, t_minishell *data)
 				free_variable(variable_info);
 			}
 		}
-		i++;
 	}
 }
 
