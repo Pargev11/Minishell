@@ -6,7 +6,7 @@
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/12/06 12:50:06 by pargev           ###   ########.fr       */
+/*   Updated: 2025/12/07 16:13:23 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int	run_builtin(char **cmds, t_minishell *data)
 {
+	data->exit_code = 0;
 	if (!ft_strncmp(cmds[0], "cd", 3))
 		cd(cmds, data);
 	else if (!ft_strncmp(cmds[0], "pwd", 4))

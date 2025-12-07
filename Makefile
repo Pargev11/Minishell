@@ -1,5 +1,5 @@
 CC			=	cc
-CFLAGS		=	-Wall -Wextra -Werror -fsanitize=address -g
+CFLAGS		=	-fsanitize=address -g -Wall -Wextra -Werror
 
 UNAME_S		:=	$(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -11,7 +11,7 @@ OBJ_DIR		=	src/obj
 INCLUDES	=	headers/
 
 BUILTINS	=	built-ins.c echo.c export.c unset.c env.c
-ENV			=	envirement_variables.c variable_list_operations.c variable_list_operations2.c subst_env_vars.c
+ENV			=	envirement_variables.c variable_list_operations.c variable_list_add.c subst_env_vars.c
 EXEC		=	exec_bins.c
 MAIN		=	main.c signals.c initialization.c
 PARSE		=	parse.c parse_helper.c read_write.c redirections.c

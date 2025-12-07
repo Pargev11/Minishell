@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 15:44:09 by pamalkha          #+#    #+#             */
-/*   Updated: 2025/11/16 18:57:30 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/12/07 16:13:43 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	export_variables(char **cmds, t_minishell *data)
 	t_var_info	*variable_info;
 	int			i;
 
-	data->exit_code = 0;
 	i = 1;
 	while (cmds[i])
 	{

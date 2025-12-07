@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built-ins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamalkha <pamalkha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 13:48:52 by vlchinen          #+#    #+#             */
-/*   Updated: 2025/11/16 18:00:59 by pamalkha         ###   ########.fr       */
+/*   Updated: 2025/12/07 16:15:30 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	cd(char **cmds, t_minishell *data)
 	char	*dir_to_ch;
 	char	*error_str;
 
-	data->exit_code = 0;
+	(void)data;
 	arr_sz = get_arr_sz(cmds);
 	dir_to_ch = cmds[1];
 	if (arr_sz > 2)
@@ -46,10 +46,10 @@ void	pwd(char **cmds, t_minishell *data)
 	char	*cwd;
 
 	(void)cmds;
+	(void)data;
 	cwd = getcwd(NULL, 0);
 	printf("%s\n", cwd);
 	free(cwd);
-	data->exit_code = 0;
 }
 
 void	exit_cmd(char **cmds, t_minishell *data)
