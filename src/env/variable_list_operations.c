@@ -12,31 +12,55 @@
 
 #include "minishell.h"
 
-t_var_info	*lst_content(t_list	*lst)
+void	lst_add_sorted_insert(t_list *new, t_list *current,
+							t_list *last, int ln_diff)
 {
-	return ((t_var_info *)lst->content);
+	while (current != NULL)
+	{
+		ln_diff = ft_strcmp(lst_content(current)->name, lst_content(new)->name);
+		if (ln_diff > 0)
+		{
+			new->next = current;
+			last->next = new;
+			return ;
+		}
+		else if (ln_diff == 0)
+		{
+			if (lst_content(new)->value != NULL)
+			{
+				new->next = current->next;
+				ft_lstdelone(current, free_variable);
+				last->next = new;
+			}
+			else
+				ft_lstdelone(new, free_variable);
+			return ;
+		}
+		last = current;
+		current = last->next;
+	}
+	last->next = new;
+}
+
+void	swap_lst(t_list **lst, t_list *new)
+{
+	*lst = new;
 }
 
 void	lst_add_sorted(t_list **lst, t_list *new)
 {
-	t_list	*current;
 	t_list	*last;
-	int		line_difference;
+	int		line_diff;
 
 	last = *lst;
 	if (!last)
-	{
-		*lst = new;
-		return ;
-	}
-	line_difference = ft_strcmp(lst_content(last)->name,
-			lst_content(new)->name);
-	if (line_difference > 0)
-	{
+		return (swap_lst(lst, new));
+	line_diff = ft_strcmp(lst_content(last)->name, lst_content(new)->name);
+	if (line_diff > 0)
 		new->next = last;
+	if (line_diff > 0)
 		*lst = new;
-	}
-	else if (line_difference == 0)
+	else if (line_diff == 0)
 	{
 		if (lst_content(new)->value != NULL)
 		{
@@ -48,36 +72,7 @@ void	lst_add_sorted(t_list **lst, t_list *new)
 			ft_lstdelone(new, free_variable);
 	}
 	else
-	{
-		current = last->next;
-		while (current != NULL)
-		{
-			line_difference = ft_strcmp(lst_content(current)->name,
-					lst_content(new)->name);
-			if (line_difference > 0)
-			{
-				new->next = current;
-				last->next = new;
-				return ;
-			}
-			else if (line_difference == 0)
-			{
-				if (lst_content(new)->value != NULL)
-				{
-					new->next = current->next;
-					ft_lstdelone(current, free_variable);
-					last->next = new;
-				}
-				else
-					ft_lstdelone(new, free_variable);
-				return ;
-			}
-			last = current;
-			current = last->next;
-		}
-		last->next = new;
-	}
-	return ;
+		lst_add_sorted_insert(new, last->next, last, line_diff);
 }
 
 char	*get_varible(char *name, t_minishell *data)

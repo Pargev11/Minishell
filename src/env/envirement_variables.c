@@ -12,9 +12,10 @@
 
 #include "minishell.h"
 
-void	var_info_pt2(char *variable, char *var_name_end, t_var_info *variable_info, t_minishell *data)
+void	var_info_pt2(char *variable, char *var_name_end,
+						t_var_info *variable_info, t_minishell *data)
 {
-	int 	var_name_size;
+	int		var_name_size;
 	char	*value;
 	char	*old_value;
 
@@ -23,7 +24,8 @@ void	var_info_pt2(char *variable, char *var_name_end, t_var_info *variable_info,
 	old_value = get_varible(variable_info->name, data);
 	if (!old_value)
 		old_value = "";
-	value = ft_substr(variable, var_name_size + 1, ft_strlen(variable) - var_name_size);
+	value = ft_substr(variable, var_name_size + 1,
+			ft_strlen(variable) - var_name_size);
 	variable_info->value = ft_strjoin(old_value, value);
 	free(value);
 }
