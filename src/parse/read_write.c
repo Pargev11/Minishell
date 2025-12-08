@@ -58,16 +58,19 @@ void	free_cmds(t_cmds *cmds)
 		free(cmds->stdin_fd);
 }
 
+void	analize_command_pt2(t_minishell *data)
+{
+	exit_cmd(NULL, data);
+	end_program(data);
+	exit(data->exit_code);
+}
+
 void	analize_command(char *command, t_minishell *data)
 {
 	t_cmds	cmds;
 
 	if (!command)
-	{
-		exit_cmd(NULL, data);
-		end_program(data);
-		exit(data->exit_code);
-	}
+		analize_command_pt2(data);
 	if (*command)
 	{
 		add_history(command);
@@ -75,12 +78,14 @@ void	analize_command(char *command, t_minishell *data)
 		if (cmds.cmds && *(cmds.cmds))
 		{
 			signal(SIGINT, print_nl_handler);
+			signal(SIGQUIT, print_nl_handler_sigquit);
 			if (char_cmds_count(cmds.cmds) == 1
 				&& changes_shell_state(cmds.cmds[0]))
 				execute_command(&cmds, data);
 			else
 				execute_pipeline(&cmds, char_cmds_count(cmds.cmds), data);
 			signal(SIGINT, interrupt_signal);
+			signal(SIGQUIT, SIG_IGN);
 		}
 		free_cmds(&cmds);
 	}

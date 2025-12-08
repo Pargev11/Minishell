@@ -52,6 +52,7 @@ void	pipe_redirect_stdio(int in_fd, int fd[2], int i, int commands_count)
 
 void	pipe_execute_cmd(t_cmds *cmds, int i, int *fd_index, t_minishell *data)
 {
+	signal(SIGQUIT, SIG_DFL);
 	data->exit_code = handle_redirects(cmds, i, fd_index);
 	if (!data->exit_code && cmds->cmds[i] && cmds->cmds[i][0]
 		&& !run_builtin(cmds->cmds[i], data))

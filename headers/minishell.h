@@ -81,6 +81,7 @@ void		end_program(t_minishell *data);
 
 //signals
 void		print_nl_handler(int sig);
+void		print_nl_handler_sigquit(int sig);
 void		interrupt_signal(int sig);
 void		print_nl_handler_and_exit(int sig);
 

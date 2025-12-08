@@ -76,6 +76,7 @@ void	execute_command(t_cmds *cmds, t_minishell *data)
 		pid = fork();
 		if (pid == 0)
 		{
+			signal(SIGQUIT, SIG_DFL);
 			exec(cmds->cmds[0], data);
 			exit(data->exit_code);
 		}

@@ -12,6 +12,12 @@
 
 #include "minishell.h"
 
+void	print_nl_handler_sigquit(int sig)
+{
+	(void)sig;
+	printf("\n");
+}
+
 void	interrupt_signal(int sig)
 {
 	(void)sig;
