@@ -28,6 +28,12 @@
 # include <errno.h>
 # include <fcntl.h>
 
+enum e_Mode
+{
+	BACKUP,
+	RESTORE
+};
+
 typedef struct s_var_info
 {
 	char	*name;
