@@ -28,6 +28,13 @@
 # include <stdint.h>
 # include <stdbool.h>
 
+typedef	enum
+{
+	TOK_STATUS_OK = 0,
+	TOK_STATUS_FATAL_ERROR,
+	TOK_STATUS_SYNTAX_ERROR
+}	t_tok_status;
+
 typedef struct s_var_info
 {
 	char	*name;
@@ -75,8 +82,10 @@ void		print_nl_handler_sigquit(int sig);
 void		interrupt_signal(int sig);
 void		print_nl_handler_and_exit(int sig);
 
-//parse
 void	analize_command(char *command, t_minishell *data);
+
+//tokenise
+t_list	*tokenize(const char *str, t_tok_status *tok_status);
 
 //envirement variables
 t_var_info	*var_info(char *variable, t_minishell *data);

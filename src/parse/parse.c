@@ -27,10 +27,48 @@
 // 	free(command);
 // }
 
+void	debug_print_tok_stream(t_tok_node *tok_node)
+{
+	switch (tok_node->type)
+	{
+		case TOK_WORD:
+			printf("TOK_WORD[%s](quote=%c)", tok_node->str, tok_node->quote);
+			printf(" -> ");
+			break;
+		case TOK_PIPE:
+			printf("TOK_PIPE");
+			printf(" -> ");
+			break;
+		case TOK_INPUT:
+			printf("TOK_INPUT");
+			printf(" -> ");
+			break;
+		case TOK_HEREDOC:
+			printf("TOK_HEREDOC");
+			printf(" -> ");
+			break;
+		case TOK_OUTPUT_APPEND:
+			printf("TOK_OUTPUT_APPEND");
+			printf(" -> ");
+			break;
+		case TOK_OUTPUT:
+			printf("TOK_OUTPUT");
+			printf(" -> ");
+			break;
+	}
+}
+
+
 void	analize_command(char *command, t_minishell *data)
 {
+	t_tok_status	tok_status;
+	t_list			*tok_stream;
 	//tokenize
-
+	tok_stream = tokenize(command, &tok_status);
+	if (tok_status == TOK_STATUS_FATAL_ERROR)
+		end_program(data);
+	ft_lstiter(tok_stream, debug_print_tok_stream);
+	printf("\n");
 	//expand variables
 
 	//parse into AST
