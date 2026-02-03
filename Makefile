@@ -1,5 +1,5 @@
 CC			=	cc
-CFLAGS		=	-g -Wall -Wextra -Werror -fsanitize=address
+CFLAGS		=	-Wall -Wextra -Werror -fsanitize=address -g
 
 UNAME_S		:=	$(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -8,16 +8,25 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 OBJ_DIR		=	src/obj
-SRC_DIR		=	src
 INCLUDES	=	headers/
+
+BUILTINS	=	built-ins.c echo.c export.c unset.c env.c
+ENV			=	envirement_variables.c variable_list_operations.c variable_list_add.c subst_env_vars.c
+EXEC		=	exec_bins.c exec.c exec_pipe.c redirections.c
+MAIN		=	main.c signals.c initialization.c
+PARSE		=	parse.c parse_to_list.c parse_to_list_helper.c parse_helper.c read_write.c remove_redirections.c
+UTILS		=	cleanup_helpers.c utils.c
 
 HEADERS		=	${INCLUDES}/minishell.h
 
-SRC			=	${SRC_DIR}/main.c ${SRC_DIR}/read_write.c ${SRC_DIR}/built-ins.c ${SRC_DIR}/parse.c \
-				${SRC_DIR}/exec_bins.c ${SRC_DIR}/cleanup_helpers.c ${SRC_DIR}/signals.c ${SRC_DIR}/initialization.c \
-				${SRC_DIR}/utils.c ${SRC_DIR}/subst_env_vars.c ${SRC_DIR}/subst_env_vars2.c \
-				${SRC_DIR}/split_with_quotes.c ${SRC_DIR}/split_with_quotes2.c
-OBJ			=	${SRC:${SRC_DIR}/%.c=${OBJ_DIR}/%.o}
+SRC			=	$(addprefix src/builtins/, $(BUILTINS)) \
+				$(addprefix src/env/, $(ENV)) \
+				$(addprefix src/exec/, $(EXEC)) \
+				$(addprefix src/parse/, $(PARSE)) \
+				$(addprefix src/main/, $(MAIN)) \
+				$(addprefix src/utils/, $(UTILS)) \
+
+OBJ			=	$(addprefix $(OBJ_DIR)/, $(SRC:src/%.c=%.o))
 
 LIBFT		=	libs/libft/
 LIBFT_A		=	$(LIBFT)libft.a
@@ -28,13 +37,14 @@ IFLAGS		+=	-I${LIBFT}
 
 NAME		=	minishell
 
-${OBJ_DIR}/%.o: ${SRC_DIR}/%.c	${HEADERS}
-				@mkdir -p ${OBJ_DIR}
+$(OBJ_DIR)/%.o: src/%.c ${HEADERS}
+				@mkdir -p $(dir $@)
 				${CC} ${CFLAGS} ${IFLAGS} -c $< -o $@
 
 all:			${NAME}
 
 ${LIBFT_A}:
+				@make -s -C $(LIBFT) fclean
 				@make -s -C $(LIBFT) bonus
 
 ${NAME}:		${OBJ} ${LIBFT_A} Makefile

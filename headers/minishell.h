@@ -26,64 +26,65 @@
 # include <sys/stat.h>
 # include <errno.h>
 # include <stdint.h>
+# include <stdbool.h>
+
+typedef struct s_var_info
+{
+	char	*name;
+	char	*value;
+}	t_var_info;
 
 typedef struct s_minishell
 {
 	char	*cwd;
+	t_list	**env_list;
 	int		exit_code;
 }	t_minishell;
 
-typedef struct s_segment
+typedef enum tok_type
 {
-	char	quoted;
-	char	*text;
-}	t_segment;
+	TOK_WORD,
+	TOK_PIPE,
+	TOK_INPUT,
+	TOK_HEREDOC,
+	TOK_OUTPUT_APPEND,
+	TOK_OUTPUT
+}	t_tok_type;
 
-typedef struct s_words
+typedef	struct s_tok_node
 {
-	t_list	*segments;
-}	t_words;
+	t_tok_type	type;
+	char		quote;
+	char		*str;
+}	t_tok_node;
 
-typedef struct s_split_data
-{
-	size_t	i;
-	size_t	start_idx;
-	int		in_word;
-	char	quote_type;
-}	t_split_data;
+
+// typedef	struct s_ast
+// {
+// 	void	*left;
+// 	void	*right;
+// }
+
+//main
+void		init(t_minishell *data);
+void		end_program(t_minishell *data);
 
 //signals
-void	print_nl_handler(int sig);
-void	interrupt_signal(int sig);
-
-void	init(t_minishell *data);
-void	end_program(t_minishell *data);
-
-void	analize_command(char *command, t_minishell *data);
+void		print_nl_handler(int sig);
+void		print_nl_handler_sigquit(int sig);
+void		interrupt_signal(int sig);
+void		print_nl_handler_and_exit(int sig);
 
 //parse
-char	**parse_words(char *cmd, t_minishell *data);
-char	**subst_vars(t_words *words, t_minishell *data);
-t_words	*split_with_quotes(char const *s, char const *set);
-void	complete_free_words(t_words **words);
+void	analize_command(char *command, t_minishell *data);
 
-//built-ins
-int		cd(char **cmds, t_minishell *data);
-int		pwd(char **cmds);
-int		exit_cmd(char **cmds, t_minishell *data);
-
-//bins execution
-int		exec(char **cmds);
-char	*search_for_path(char **envp, char *program);
-char	*dist_path_line(char **envp);
-
-//cleanup
-void	free_arr(char **arr, char ***cmds);
-
-//utils
-int		get_arr_sz(char **arr_2d);
-int		is_dir(char const *path);
-char	*str_rm_idx(char *str, size_t idx);
-char	*strreplace(char *str, char *str_to_replace, char *replacement);
+//envirement variables
+t_var_info	*var_info(char *variable, t_minishell *data);
+t_list		**env_to_list(void);
+char		**list_to_env(t_minishell *data);
+void		lst_add_sorted(t_list **lst, t_list *new);
+t_var_info	*lst_content(t_list	*lst);
+void		free_variable(void	*lst);
+char		*get_varible(char *name, t_minishell *data);
 
 #endif

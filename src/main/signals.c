@@ -1,38 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pargev <pargev@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/13 14:31:00 by pargev            #+#    #+#             */
-/*   Updated: 2025/07/20 22:48:35 by pargev           ###   ########.fr       */
+/*   Created: 2025/07/20 13:48:32 by vlchinen          #+#    #+#             */
+/*   Updated: 2025/12/07 19:52:13 by pargev           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	minishell(t_minishell *data)
+void	print_nl_handler_sigquit(int sig)
 {
-	char		*command;
-	char		*prompt_str;
-
-	while (1)
-	{
-		prompt_str = ft_strjoin(data->cwd, "$ ");
-		command = readline(prompt_str);
-		free(prompt_str);
-		analize_command(command, data);
-	}
-	free(data->cwd);
+	(void)sig;
+	printf("\n");
 }
 
-int	main(void)
+void	interrupt_signal(int sig)
 {
-	static t_minishell	data;
+	(void)sig;
+	printf("\n");
+	rl_replace_line ("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+}
 
-	init(&data);
-	minishell(&data);
-	fscanf(stdin, "c");
-	return (0);
+void	print_nl_handler(int sig)
+{
+	(void)sig;
+	printf("\n");
+}
+
+void	print_nl_handler_and_exit(int sig)
+{
+	(void)sig;
+	printf("\n");
+	exit(130);
 }
