@@ -10,12 +10,12 @@ endif
 OBJ_DIR		=	src/obj
 INCLUDES	=	headers/
 
-BUILTINS	=	built-ins.c echo.c export.c unset.c env.c
-ENV			=	envirement_variables.c variable_list_operations.c variable_list_add.c subst_env_vars.c
-EXEC		=	exec_bins.c exec.c exec_pipe.c redirections.c
+BUILTINS	=	#built-ins.c echo.c export.c unset.c env.c
+ENV			=	envirement_variables.c variable_list_operations.c variable_list_add.c #subst_env_vars.c
+EXEC		=	
 MAIN		=	main.c signals.c initialization.c
-PARSE		=	parse.c parse_to_list.c parse_to_list_helper.c parse_helper.c read_write.c remove_redirections.c
-UTILS		=	cleanup_helpers.c utils.c
+PARSE		=	parse.c tokenize.c
+UTILS		=	utils.c
 
 HEADERS		=	${INCLUDES}/minishell.h
 

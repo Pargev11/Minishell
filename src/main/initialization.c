@@ -28,8 +28,8 @@ void	init(t_minishell *data)
 		exit(1);
 	data->cwd = getcwd(NULL, 0);
 	data->exit_code = 0;
-	signal(SIGINT, interrupt_signal);
-	signal(SIGQUIT, SIG_IGN);
+	//signal(SIGINT, interrupt_signal);
+	//signal(SIGQUIT, SIG_IGN);
 }
 
 void	end_program(t_minishell *data)

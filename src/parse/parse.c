@@ -27,8 +27,10 @@
 // 	free(command);
 // }
 
-void	debug_print_tok_stream(t_tok_node *tok_node)
+void	debug_print_tok_stream(void *void_param)
 {
+	t_tok_node	*tok_node = (t_tok_node*)void_param;
+
 	switch (tok_node->type)
 	{
 		case TOK_WORD:
@@ -69,6 +71,9 @@ void	analize_command(char *command, t_minishell *data)
 		end_program(data);
 	ft_lstiter(tok_stream, debug_print_tok_stream);
 	printf("\n");
+
+	//process heredoc_s
+
 	//expand variables
 
 	//parse into AST

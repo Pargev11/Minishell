@@ -96,4 +96,7 @@ t_var_info	*lst_content(t_list	*lst);
 void		free_variable(void	*lst);
 char		*get_varible(char *name, t_minishell *data);
 
+//utils
+int			ft_strcmp(const char *s1, const char *s2);
+
 #endif
