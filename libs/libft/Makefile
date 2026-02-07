@@ -1,5 +1,5 @@
 iCC		=	cc
-CFLAGS	=	-Wall -Wextra -Werror
+CFLAGS	=	-Wall -Wextra -Werror -g -fsanitize=address
 
 OBJ_DIR	=	obj
 SRC		=	ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c \

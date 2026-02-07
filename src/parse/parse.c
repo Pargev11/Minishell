@@ -27,6 +27,19 @@
 // 	free(command);
 // }
 
+void	debug_print_word_segments(t_list *word_segments)
+{
+	t_list	*node = word_segments;
+
+	while (node)
+	{
+		if (((t_word_segment *)node->content)->is_subshell_subst)
+			printf("SubShell");
+		printf("[%s]", ((t_word_segment *)node->content)->segment);
+		node = node->next;
+	}
+}
+
 void	debug_print_tok_stream(void *void_param)
 {
 	t_tok_node	*tok_node = (t_tok_node*)void_param;
@@ -34,7 +47,9 @@ void	debug_print_tok_stream(void *void_param)
 	switch (tok_node->type)
 	{
 		case TOK_WORD:
-			printf("TOK_WORD[%s](quote=%c)", tok_node->str, tok_node->quote);
+			printf("TOK_WORD[");
+			debug_print_word_segments(tok_node->word_segments);
+			printf("]\n");
 			printf(" -> ");
 			break;
 		case TOK_PIPE:
@@ -56,6 +71,16 @@ void	debug_print_tok_stream(void *void_param)
 		case TOK_OUTPUT:
 			printf("TOK_OUTPUT");
 			printf(" -> ");
+			break;
+		case TOK_L_PAREN:
+			printf("TOK_L_PAREN");
+			printf(" -> ");
+			break;
+		case TOK_R_PAREN:
+			printf("TOK_R_PAREN");
+			printf(" -> ");
+			break;
+		case TOK_SUBST_OPEN:
 			break;
 	}
 }

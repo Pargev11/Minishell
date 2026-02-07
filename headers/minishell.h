@@ -28,6 +28,33 @@
 # include <stdint.h>
 # include <stdbool.h>
 
+typedef enum tok_type
+{
+	TOK_WORD,
+	TOK_PIPE,
+	TOK_INPUT,
+	TOK_HEREDOC,
+	TOK_OUTPUT_APPEND,
+	TOK_OUTPUT,
+	TOK_L_PAREN,
+	TOK_R_PAREN,
+	TOK_SUBST_OPEN
+}	t_tok_type;
+
+typedef	struct s_symbol_map
+{
+    char        *symbol;
+    t_tok_type  type;
+}	t_symbol_map;
+
+typedef	enum
+{
+	MATCH_STATUS_FATAL_ERROR = 1,
+	MATCH_STATUS_SYNTAX_ERROR,
+	MATCH_STATUS_DOESNT_MATCH,
+	MATCH_STATUS_MATCH
+}	t_match_status;
+
 typedef	enum
 {
 	TOK_STATUS_OK = 0,
@@ -48,21 +75,18 @@ typedef struct s_minishell
 	int		exit_code;
 }	t_minishell;
 
-typedef enum tok_type
+typedef	struct s_word_segment
 {
-	TOK_WORD,
-	TOK_PIPE,
-	TOK_INPUT,
-	TOK_HEREDOC,
-	TOK_OUTPUT_APPEND,
-	TOK_OUTPUT
-}	t_tok_type;
+	char	quote;
+	bool	is_subshell_subst;
+	char	*segment;
+}	t_word_segment;
+
 
 typedef	struct s_tok_node
 {
 	t_tok_type	type;
-	char		quote;
-	char		*str;
+	t_list		*word_segments;
 }	t_tok_node;
 
 
