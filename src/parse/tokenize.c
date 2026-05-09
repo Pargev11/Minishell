@@ -295,26 +295,7 @@ t_list	*tokenize(const char *str, t_tok_status *tok_status)
 	return (tok_stream);
 }
 
-//TODO: May want to add failsafe syntax error case if all of the matchers didn't match
-// also need to implement conjunction of adjacent words in quotes like ["abc"def]
-
 // "(" and ")" are plain tokens, "$(" enables special mode of str consumtion with nested depth tracking.
 //n.b. if ("(" || "$(") depth++; else if (")") depth--; if (depth == 0) -> we've finished with $( word subsegment
-//Important! [(...)] is a COMMAND node (stream of tokens on parsing stage) (supports redirects as any command) and [$(...)] is a word segment (raw string)
-
-//refactor matching loop with something like:
-// typedef struct s_symbol_map {
-//     char        *symbol;
-//     t_tok_type  type;
-// } t_symbol_map;
-// static const t_symbol_map symbols_map[] = {
-//     {"$(", TOK_SUBST_OPEN},
-//     {">>", TOK_OUTPUT_APPEND},
-//     {"<<", TOK_HEREDOC},
-//     {">",  TOK_OUTPUT},
-//     {"<",  TOK_INPUT},
-//     {"|",  TOK_PIPE},
-//     {"(",  TOK_L_PAREN},
-//     {")",  TOK_R_PAREN},
-//     {NULL, 0}
-// };
+//Important! [(...)] is a COMMAND node (stream of tokens on parsing stage) (supports redirects as any command)
+//and [$(...)] is a word segment (raw string)
